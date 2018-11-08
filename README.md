@@ -1,43 +1,12 @@
-# BOM
+# cnosh
+**An intelligent cat food dispenser based on an ESP32-Microcontoller.**
 
-## Gehäuse
+In this repository the cnosh will be created by [Dario](https://github.com/dleunig) and [Alex](https://github.com/abergy) for the elective "Embedded-Software" on the FH-Bielefeld.
 
-### Holz
-Maße folgen
+For a better overview we linked all diagrams and documents that we created in the [GitHub- Wiki](https://github.com/IoT-Lab-Minden/cnosh/wiki). Everything here is under development and will be updated regularly.
 
-### 3D Drucker
-- Förderrad
-- Fördertrichter
-- Motor und Getriebegehäuse
-- ESP32 Halterung
-- Step-Down Wandler Halterung
-- LCD Halterung
-- RFID Halterung
-- Deckel
+If there are any questions, please send us a mail:
 
-### Rohre
-- HT DN90
-- 2x HT DN50
-- HT DN50 45° Bogen
+- dleunig@fh-bielefeld.de
+- alexander.bergmann@fh-bielefeld.de
 
-
-### Schrauben u. Kleinteile
-- 4x M2,5mm * 6mm ISO 7380
-- 3x M2,5mm * 10mm ISO 7380
-- 4x M2,5mm * 6mm DIN 934
-- 4x M2,5mm DIN 1258
-- 2x Metalwinkel 90mm * 90mm * 40mm
-- Kupplung 8mm - 5mm
-
-## Elektronik
-- ESP32
-- Step-Down Wandler 12V - 3,3V
-- NPN Transistor BC639
-- Diode
-- Widerstand 100Ohm
-- Getriebemotor
-- LCD 1602
-- LCD 1602 Modul
-- Netzteil 12V
-- RFID RC522
-- 4x Füllstandssensor TCRT5000
