@@ -3,7 +3,7 @@
 
 In this repository the cnosh will be created by [Dario](https://github.com/dleunig) and [Alex](https://github.com/abergy) for the elective "Embedded-Software" on the FH-Bielefeld.
 
-For a better overview we linked all diagrams and documents that we created in the [GitHub- Wiki](https://github.com/IoT-Lab-Minden/cnosh/wiki). Everything here is under development and will be updated regularly.
+For a better overview we linked all diagrams and documents that we created in the [GitHub-Wiki](https://github.com/IoT-Lab-Minden/cnosh/wiki). Everything here is under development and will be updated regularly.
 
 If there are any questions, please send us a mail:
 
