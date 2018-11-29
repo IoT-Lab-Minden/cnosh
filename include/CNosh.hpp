@@ -15,6 +15,7 @@
 #include <RFID.hpp>
 #include <Measure.hpp>
 #include <ServoEngine.hpp>
+#include <Const.hpp>
 
 class CNosh {
     public:
@@ -25,14 +26,14 @@ class CNosh {
         bool init();
         
     private:
-      LCD lcd;
-      RFID rfid;
-      Measure measure;
-      ServoEngine servo;
-      Basecamp iot; 
+        LCD *lcd;
+        RFID *rfid;
+        Measure *measure;
+        ServoEngine *servo;
+        Basecamp *iot; 
 
-      JsonObject settings;
-
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject *settings;
 };
 
 #endif

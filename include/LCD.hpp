@@ -12,6 +12,7 @@
 
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
+#include <Const.hpp>
 
 class LCD {
     public:
@@ -23,7 +24,7 @@ class LCD {
         void clear();
     
     private:
-       LiquidCrystal_I2C lcd; 
+       LiquidCrystal_I2C *lcd; 
 
 };
 
