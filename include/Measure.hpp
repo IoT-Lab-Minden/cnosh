@@ -1,5 +1,5 @@
 /*
-   CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+   Measure - Firmware for ESP32 based cat food dispenser with Wi-Fi control
    Written by 
    - Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
    - Dario Leunig (dleunig@fh-bielefeld.de)
@@ -21,8 +21,8 @@ class Measure {
         double readDistance();
         
     private:
-       Adafruit_VL53L0X lox;
-       VL53L0X_RangingMeasurementData_t measure;
+       Adafruit_VL53L0X *lox;
+       VL53L0X_RangingMeasurementData_t *measure;
 
 };
 
