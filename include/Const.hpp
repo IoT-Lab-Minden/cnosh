@@ -14,4 +14,9 @@
 static int lcdColumns = 16;
 static int lcdRows = 2;
 
+// RFID
+// Correct pins still need to be entered
+#define SS_PIN 10
+#define RST_PIN 9
+
 #endif
