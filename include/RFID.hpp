@@ -12,6 +12,7 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
+#include <Const.hpp>
 
 class RFID {
     public:
@@ -24,7 +25,7 @@ class RFID {
         bool readUnitSerial();
     
     private:
-       MFRC522 rfid; 
+       MFRC522 *rfid;
 
 };
 
