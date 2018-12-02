@@ -21,7 +21,7 @@ class ServoEngine {
         void stop();
     
     private:
-       Servo servo; 
+       Servo *servo; 
 
 };
 
