@@ -17,7 +17,7 @@ class ServoEngine {
         ServoEngine();
         ~ServoEngine() = default;
 
-        void rotate();
+        void rotate(int, int);
         void stop();
     
     private:
