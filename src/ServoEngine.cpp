@@ -9,3 +9,14 @@
 
 #include <ServoEngine.hpp>
 
+ServoEngine::ServoEngine() {
+    servo = new Servo();
+}
+
+void ServoEngine::rotate(int direction, int duration) {
+
+}
+
+void ServoEngine::stop() {
+
+}
