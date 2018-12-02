@@ -20,12 +20,12 @@ class Time {
         ~Time() = default;
 
         bool init();
-        String getDate(String, int);
+        String getDate();
         String getTime();
     
     private:
-       NTPClient timeClient;
-       WiFiUDP ntpUDP;
+       NTPClient *timeClient;
+       WiFiUDP *ntpUDP;
        String formattedDate;
        String dayStamp;
        String timeStamp;
