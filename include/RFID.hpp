@@ -7,8 +7,8 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef RFID_h
-#define RFID_h
+#ifndef CNOSH_RFID_H
+#define CNOSH_RFID_H
 
 #include <SPI.h>
 #include <MFRC522.h>
@@ -29,4 +29,4 @@ class RFID {
 
 };
 
-#endif
+#endif // CNOSH_RFID_H

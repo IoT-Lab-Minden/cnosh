@@ -7,8 +7,8 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef CONST_h
-#define CONST_h
+#ifndef CNOSH_CONST_H
+#define CNOSH_CONST_H
 
 // LCD
 const int LCD_COLUMNS = 16;
@@ -22,4 +22,4 @@ const int SS_PIN = 5;
 // Servo
 const int SERVO_PIN = 14;
 
-#endif 
+#endif // CNOSH_CONST_h

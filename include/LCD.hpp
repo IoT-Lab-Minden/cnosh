@@ -7,8 +7,8 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef LCD_h
-#define LCD_h
+#ifndef CNOSH_LCD_H
+#define CNOSH_LCD_H
 
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
@@ -28,4 +28,4 @@ class LCD {
 
 };
 
-#endif
+#endif // CNOSH_LCD_H

@@ -7,8 +7,8 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef Time_h
-#define Time_h
+#ifndef CNOSH_TIME_H
+#define CNOSH_TIME_H
 
 #include <NTPClient.h>
 #include <WiFiUdp.h>
@@ -31,4 +31,4 @@ class Time {
        String timeStamp;
 };
 
-#endif
+#endif // CNOSH_TIME_H
