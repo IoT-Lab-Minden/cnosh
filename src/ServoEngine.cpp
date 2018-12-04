@@ -11,15 +11,15 @@
 
 ServoEngine::ServoEngine() {
     servo = new Servo();
-    servo.attach(SERVO_PIN);
+    servo->attach(SERVO_PIN);
 }
 
 void ServoEngine::rotate(int direction, int duration) {
-	servo.write(direction);
+	servo->write(direction);
 	delay(duration);
-	servo.stop();
+	this->stop();
 }
 
 void ServoEngine::stop() {
-	servo.write(95);
+	servo->write(95);
 }

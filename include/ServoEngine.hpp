@@ -11,6 +11,7 @@
 #define CNOSH_SERVOENGINE_H
 
 #include <Servo.h>
+#include <Const.hpp>
 
 class ServoEngine {
     public:

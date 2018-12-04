@@ -16,14 +16,17 @@ CNosh::CNosh() {
 }
 
 bool CNosh::init() {
-
-    Serial.begin(115200);
-    
     // for using slave i2c-Bus
     // don't need this line when using master
     Wire.begin(SDA_SLAVE, SCL_SLAVE); 
+    lcd->init();
+    return true;
 }
 
 bool CNosh::begin() {
-    
+    lcd->printLine("PePe", 0);
+    delay(2000);
+    lcd->printLine("PePe", 1);
+    delay(2000);
+    return true;
 }
