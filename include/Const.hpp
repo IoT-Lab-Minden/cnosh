@@ -13,7 +13,7 @@
 // LCD
 const int LCD_COLUMNS = 16;
 const int LCD_ROWS = 2;
-const int LCD_ADRESS = 63; //0x3F
+const int LCD_ADRESS = 63; // 0x3F
 const int SDA_SLAVE = 25;
 const int SCL_SLAVE = 26;
 // RFID
@@ -21,4 +21,5 @@ const int RST_PIN = 2;
 const int SS_PIN = 5; 
 // Servo
 const int SERVO_PIN = 14;
-#endif
+
+#endif 

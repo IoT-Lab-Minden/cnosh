@@ -1,5 +1,5 @@
 /*
-   RFID - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+   CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
    Written by 
    - Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
    - Dario Leunig (dleunig@fh-bielefeld.de)

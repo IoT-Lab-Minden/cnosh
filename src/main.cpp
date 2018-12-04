@@ -1,9 +1,13 @@
 #include <Arduino.h>
+#include <CNosh.hpp>
+
+CNosh *cnosh = new CNosh();
 
 void setup() {
-  // put your setup code here, to run once:
+  cnosh->init();
+  
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  cnosh->begin();
 }

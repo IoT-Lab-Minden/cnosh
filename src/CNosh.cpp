@@ -11,10 +11,17 @@
 
 CNosh::CNosh() {
     settings = &jsonBuffer.createObject();
+    lcd = new LCD();
+    measure = new Measure();
 }
 
 bool CNosh::init() {
-    lcd = new LCD();
+
+    Serial.begin(115200);
+    
+    // for using slave i2c-Bus
+    // don't need this line when using master
+    Wire.begin(SDA_SLAVE, SCL_SLAVE); 
 }
 
 bool CNosh::begin() {
