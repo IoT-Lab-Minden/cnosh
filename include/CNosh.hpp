@@ -10,6 +10,7 @@
 #ifndef CNOSH_H_
 #define CNOSH_H_
 
+#include <Arduino.h>
 #include <Basecamp.hpp>
 #include <LCD.hpp>
 #include <RFID.hpp>
