@@ -1,5 +1,5 @@
 /*
-   RFID - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+   CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
    Written by 
    - Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
    - Dario Leunig (dleunig@fh-bielefeld.de)
@@ -14,17 +14,29 @@ RFID::RFID() {
 }
 
 bool RFID::init() {
-
+    while (!Serial); // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
+    SPI.begin(); // Init SPI bus
+    rfid->PCD_Init(); // Init MFRC522
 }
 
 void RFID::dumpToSerial() {
-
+    rfid->PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
 }
 
 int RFID::detectUnit() {
-
+    Serial.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
+    // Look for new cards
+    if ( ! rfid->PICC_IsNewCardPresent()) {
+    return 1;
+    }
+    // Select one of the cards
+    if ( ! rfid->PICC_ReadCardSerial()) {
+    return 1;
+    }
+    return 0;
 }
 
 bool RFID::readUnitSerial() {
-
+    // Dump debug info about the card; PICC_HaltA() is automatically called
+    rfid->PICC_DumpToSerial(&(rfid->uid));
 }

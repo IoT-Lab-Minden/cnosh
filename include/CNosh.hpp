@@ -7,8 +7,8 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef CNosh_h
-#define CNosh_h
+#ifndef CNOSH_H_
+#define CNOSH_H_
 
 #include <Basecamp.hpp>
 #include <LCD.hpp>
@@ -36,4 +36,4 @@ class CNosh {
         JsonObject *settings;
 };
 
-#endif
+#endif // CNOSH_H_
