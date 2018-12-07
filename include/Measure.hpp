@@ -7,8 +7,8 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef Measure_h
-#define Measure_h
+#ifndef CNOSH_MEASURE_H
+#define CNOSH_MEASURE_H
 
 #include <Adafruit_VL53L0X.h>
 
@@ -26,4 +26,4 @@ class Measure {
 
 };
 
-#endif
+#endif // CNOSH_MEASURE_H

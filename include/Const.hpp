@@ -7,16 +7,19 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef CONST_h
-#define CONST_h
+#ifndef CNOSH_CONST_H
+#define CNOSH_CONST_H
 
 // LCD
-static int lcdColumns = 16;
-static int lcdRows = 2;
-
+const int LCD_COLUMNS = 16;
+const int LCD_ROWS = 2;
+const int LCD_ADRESS = 63; // 0x3F
+const int SDA_SLAVE = 25;
+const int SCL_SLAVE = 26;
 // RFID
-// Correct pins still need to be entered
-#define SS_PIN 10
-#define RST_PIN 9
+const int RST_PIN = 2;
+const int SS_PIN = 5; 
+// Servo
+const int SERVO_PIN = 14;
 
-#endif
+#endif // CNOSH_CONST_h

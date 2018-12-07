@@ -11,12 +11,22 @@
 
 CNosh::CNosh() {
     settings = &jsonBuffer.createObject();
+    lcd = new LCD();
+    measure = new Measure();
 }
 
 bool CNosh::init() {
-    lcd = new LCD();
+    // for using slave i2c-Bus
+    // don't need this line when using master
+    Wire.begin(SDA_SLAVE, SCL_SLAVE); 
+    lcd->init();
+    return true;
 }
 
 bool CNosh::begin() {
-    
+    lcd->printLine("PePe", 0);
+    delay(2000);
+    lcd->printLine("PePe", 1);
+    delay(2000);
+    return true;
 }

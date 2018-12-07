@@ -7,10 +7,11 @@
    Licensed under GPLv3. See LICENSE for details.
    */
 
-#ifndef ServoEngine_h
-#define ServoEngine_h
+#ifndef CNOSH_SERVOENGINE_H
+#define CNOSH_SERVOENGINE_H
 
 #include <Servo.h>
+#include <Const.hpp>
 
 class ServoEngine {
     public:
@@ -25,4 +26,4 @@ class ServoEngine {
 
 };
 
-#endif
+#endif // CNOSH_SERVOENGINE_H
