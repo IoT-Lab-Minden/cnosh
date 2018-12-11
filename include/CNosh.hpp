@@ -18,6 +18,12 @@
 #include <ServoEngine.hpp>
 #include <Const.hpp>
 
+static Basecamp iot {
+  Basecamp::
+  SetupModeWifiEncryption::
+  secured
+};
+
 class CNosh {
     public:
         CNosh();
@@ -31,8 +37,6 @@ class CNosh {
         RFID *rfid;
         Measure *measure;
         ServoEngine *servo;
-        Basecamp *iot; 
-
         DynamicJsonBuffer jsonBuffer;
         JsonObject *settings;
 };
