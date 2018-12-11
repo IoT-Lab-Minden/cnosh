@@ -10,12 +10,19 @@
 #ifndef CNOSH_H_
 #define CNOSH_H_
 
+#include <Arduino.h>
 #include <Basecamp.hpp>
 #include <LCD.hpp>
 #include <RFID.hpp>
 #include <Measure.hpp>
 #include <ServoEngine.hpp>
 #include <Const.hpp>
+
+static Basecamp iot {
+  Basecamp::
+  SetupModeWifiEncryption::
+  secured
+};
 
 class CNosh {
     public:
@@ -30,8 +37,6 @@ class CNosh {
         RFID *rfid;
         Measure *measure;
         ServoEngine *servo;
-        Basecamp *iot; 
-
         DynamicJsonBuffer jsonBuffer;
         JsonObject *settings;
 };

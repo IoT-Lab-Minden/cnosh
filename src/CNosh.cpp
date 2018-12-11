@@ -16,6 +16,7 @@ CNosh::CNosh() {
 }
 
 bool CNosh::init() {
+    iot.begin();
     // for using slave i2c-Bus
     // don't need this line when using master
     Wire.begin(SDA_SLAVE, SCL_SLAVE); 

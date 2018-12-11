@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <CNosh.hpp>
 
 CNosh *cnosh = new CNosh();
@@ -10,4 +9,6 @@ void setup() {
 
 void loop() {
   cnosh->begin();
+  Serial.println("Hello World");
+  delay(2000); 
 }
