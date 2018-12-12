@@ -39,6 +39,8 @@ class CNosh {
         ServoEngine *servo;
         DynamicJsonBuffer jsonBuffer;
         JsonObject *settings;
+
+        bool initConfiguration();
 };
 
 #endif // CNOSH_H_
