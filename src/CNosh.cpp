@@ -26,12 +26,22 @@ bool CNosh::init() {
 }
 
 bool CNosh::begin() {
-    lcd->printLine("PePe", 0);
-    delay(2000);
-    iot.configuration.dump();
-    lcd->printLine("PePe", 1);
-    delay(2000);
+    Serial.println("Hello World!");
+    delay(3000);
     return true;
+}
+
+void CNosh::task() {
+    Serial.println("Hello World!");
+    delay(3000);
+}
+
+void CNosh::startTaskImpl(void* _this) {
+    (CNosh*)_this->task();
+}
+
+void CNosh::startTask() {
+    xTaskCreate(this->startTaskImpl, "Task", 2048, this, 5, NULL);
 }
 
 bool CNosh::initConfiguration() {
@@ -48,5 +58,7 @@ bool CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::cnoshConfiguration, "true");
         iot.configuration.save();
     }
+    iot.configuration.dump();
+    startTask();
     return true;
 }

@@ -8,7 +8,6 @@ void setup() {
 }
 
 void loop() {
-  cnosh->begin();
-  Serial.println("Hello World");
-  delay(2000); 
+  //cnosh->begin();
+  //xTaskCreate(&cnosh->begin, "cnosh_test", 2048, NULL, 5, NULL);
 }

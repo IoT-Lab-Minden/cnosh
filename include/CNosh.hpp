@@ -41,6 +41,10 @@ class CNosh {
         JsonObject *settings;
 
         bool initConfiguration();
+
+        void task();
+        static void startTaskImpl(void*);
+        void startTask();
 };
 
 #endif // CNOSH_H_
