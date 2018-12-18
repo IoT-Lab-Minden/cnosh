@@ -43,7 +43,9 @@ class CNosh {
         bool initConfiguration();
 
         void task();
+        void taskTwo();
         static void startTaskImpl(void*);
+        static void startTaskImplTwo(void*);
         void startTask();
 };
 

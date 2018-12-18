@@ -32,16 +32,31 @@ bool CNosh::begin() {
 }
 
 void CNosh::task() {
-    Serial.println("Hello World!");
-    delay(3000);
+    while(1){
+        Serial.println("Hello World!");
+        delay(2000);
+        }
+    
+}
+void CNosh::taskTwo() {
+    while(1){
+        for(int i=0; i<=10000; i++){
+            Serial.println(i);
+        }
+    }
 }
 
 void CNosh::startTaskImpl(void* _this) {
-    (CNosh*)_this->task();
+    static_cast<CNosh*>(_this)->task();
+}
+
+void CNosh::startTaskImplTwo(void* _this) {
+    static_cast<CNosh*>(_this)->taskTwo();
 }
 
 void CNosh::startTask() {
-    xTaskCreate(this->startTaskImpl, "Task", 2048, this, 5, NULL);
+    xTaskCreate(this->startTaskImpl, "Task", 2048, NULL, 5, NULL);
+    xTaskCreate(this->startTaskImplTwo, "TaskTwo", 2048, NULL, 1, NULL);
 }
 
 bool CNosh::initConfiguration() {
