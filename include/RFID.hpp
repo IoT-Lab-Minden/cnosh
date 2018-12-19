@@ -21,7 +21,7 @@ class RFID {
 
         void dumpToSerial();
         bool init();
-        int detectUnit();
+        void detectUnit();
         bool readUnitSerial();
     
     private:

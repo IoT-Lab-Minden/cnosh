@@ -29,6 +29,8 @@ class CNosh {
         CNosh();
         ~CNosh() = default;
 
+        
+        
         bool begin();
         bool init();
         
@@ -42,11 +44,13 @@ class CNosh {
 
         bool initConfiguration();
 
-        void task();
-        void taskTwo();
-        static void startTaskImpl(void*);
-        static void startTaskImplTwo(void*);
-        void startTask();
+        void taskLCD();
+        void taskButton();
+        void taskRFID();
+        static void startTaskLCD(void*);
+        static void startTaskButton(void*);
+        static void startTaskRFID(void*);
+        void startTasks();
 };
 
 #endif // CNOSH_H_

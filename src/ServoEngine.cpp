@@ -16,10 +16,12 @@ ServoEngine::ServoEngine() {
 
 void ServoEngine::rotate(int direction, int duration) {
 	servo->write(direction);
-	delay(duration);
-	this->stop();
+    if(duration != 0){
+        delay(duration);
+        this->stop();
+    }
 }
 
 void ServoEngine::stop() {
-	servo->write(95);
+    servo->write(95);
 }

@@ -20,6 +20,8 @@ const int SCL_SLAVE = 26;
 const int RST_PIN = 2;
 const int SS_PIN = 5; 
 // Servo
-const int SERVO_PIN = 14;
+const int SERVO_PIN = 12;
+// Button
+const int BUTTON_PIN = 13;
 
 #endif // CNOSH_CONST_h
