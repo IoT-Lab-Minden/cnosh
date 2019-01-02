@@ -22,10 +22,9 @@ class RFID {
         void dumpToSerial();
         bool init();
         void detectUnit();
-        bool readUnitSerial();
     
     private:
-       MFRC522 *rfid;
+       MFRC522 *mfrc522;
 
 };
 
