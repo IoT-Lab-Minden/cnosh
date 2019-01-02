@@ -21,13 +21,17 @@ CNosh::CNosh()
 bool CNosh::init()
 {
     //iot.begin();
-    this->initConfiguration();
+    pinMode(BUTTON_PIN, INPUT_PULLDOWN);
+    lcd->init();
     // for using slave i2c-Bus
     // don't need this line when using master
     Wire.begin(SDA_SLAVE, SCL_SLAVE);
-    lcd->init();
-    rfid->init();
-    pinMode(BUTTON_PIN, INPUT_PULLDOWN);
+    
+    
+    
+    //rfid->init();
+    
+    this->initConfiguration();
     return true;
 }
 
@@ -38,8 +42,9 @@ bool CNosh::begin()
     return true;
 }
 
-void CNosh::taskLCD()
+void CNosh::startTaskLCD(void *lcdObj)
 {
+    LCD * lcdTest = (LCD *) lcdObj;
     while (1)
     {
         Serial.println("Printing LCD");
@@ -47,53 +52,17 @@ void CNosh::taskLCD()
         delay(2000);
         //Serial.print(measure->readDistance());
 
-        // lcd->clear();
-        // lcd->printLine("Welcome to CNosh", 0);
-        // lcd->printLine("FillLevel: ", 1);
-        //delay(2000);
-    }
-}
-void CNosh::taskButton()
-{
-    int press1 = 0;
-    while (1)
-    {
-        press1 = digitalRead(BUTTON_PIN);
-        if (press1 == LOW)
-        {
-            //servo->stop();
-            Serial.println("LOW");
-            
-        }
-        else
-        {
-            //servo->rotate(180, 0);
-            Serial.println("HIGH");
-        }
+        lcdTest->clear();
+        lcdTest->printLine("Welcome to CNosh", 0);
+        lcdTest->printLine("FillLevel: ", 1);
         delay(2000);
     }
-}
-void CNosh::taskRFID()
-{
-    while (1)
-    {
-        delay(3000);
-        Serial.println("RFID");
-        //rfid->detectUnit();
-        //rfid->dumpToSerial();
-    }
-}
-
-void CNosh::startTaskLCD(void *lcdObj)
-{
-    //LCD * lcdTest = (ServoEngine *) servoObj;
-    
 }
 
 void CNosh::startTaskButton(void *servoObj)
 {
     int press1 = 0;
-    ServoEngine * servoTest = (ServoEngine *) servoObj;
+    ServoEngine *servoTest = (ServoEngine *) servoObj;
     while (1)
     {
         press1 = digitalRead(BUTTON_PIN);
@@ -110,19 +79,29 @@ void CNosh::startTaskButton(void *servoObj)
 
 void CNosh::startTaskRFID(void *rfidObj)
 {
-    RFID * rfidTest = (RFID *) rfidObj;
+    MFRC522 *rfidTest = (MFRC522 *) rfidObj;
 
     while (1)
     {
-        rfidTest->detectUnit();
-        //rfidTest->readUnitSerial();
+        // Look for new cards
+        if ( ! rfidTest->PICC_IsNewCardPresent()) {
+        return;
+        }
+        
+        // Select one of the cards
+        if ( ! rfidTest->PICC_ReadCardSerial()) {
+        return;
+        }
+        
+        // Dump debug info about the card; PICC_HaltA() is automatically called
+        rfidTest->PICC_DumpToSerial(&(rfidTest->uid));
     }
 }
 
 void CNosh::startTasks()
 {
-    //xTaskCreate(this->startTaskLCD, "LCD", 2048, NULL, 5, NULL);
-    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1, NULL);
+    xTaskCreate(this->startTaskLCD, "LCD", 2048, lcd, 5, NULL);
+    //xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1, NULL);
     //xTaskCreate(this->startTaskRFID, "RFID", 2048, rfid, 1, NULL);
 }
 
