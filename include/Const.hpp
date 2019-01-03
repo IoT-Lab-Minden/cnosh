@@ -1,9 +1,9 @@
 /*
    CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
-   Written by 
+   Written by
    - Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
    - Dario Leunig (dleunig@fh-bielefeld.de)
-   
+
    Licensed under GPLv3. See LICENSE for details.
    */
 
@@ -18,7 +18,7 @@ const int SDA_SLAVE = 25;
 const int SCL_SLAVE = 26;
 // RFID
 const int RST_PIN = 2;
-const int SS_PIN = 5; 
+const int SS_PIN = 5;
 // Servo
 const int SERVO_PIN = 12;
 // Button
