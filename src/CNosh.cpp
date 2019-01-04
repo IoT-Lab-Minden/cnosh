@@ -24,7 +24,7 @@ bool CNosh::init() {
 
   pinMode(BUTTON_PIN, INPUT_PULLDOWN);
 
-  // iot.begin();
+  iot.begin();
   lcd->init();
   rfid->init();
   measure->init();
@@ -86,7 +86,7 @@ iot.configuration.save();
 iot.configuration.dump(); */
 
   xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
-  // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 5, NULL);
+  xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
   xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 0, NULL);
   return true;
 }
