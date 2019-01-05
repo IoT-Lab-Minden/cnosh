@@ -1,14 +1,20 @@
-/*
-   CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
-   Written by
-   - Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
-   - Dario Leunig (dleunig@fh-bielefeld.de)
-
-   Licensed under GPLv3. See LICENSE for details.
-   */
-
+/**
+ * @file CNosh.cpp
+ * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
+ * @author Dario Leunig (dleunig@fh-bielefeld.de)
+ * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+ * @version 0.1
+ * @date 2019-01-05
+ * 
+ * @copyright Copyright (c) 2019
+ * Licensed under GPLv3. See LICENSE for details.
+ */
 #include <CNosh.hpp>
 
+/**
+ * @brief Construct a new CNosh::CNosh object
+ * 
+ */
 CNosh::CNosh() {
   settings = &jsonBuffer.createObject();
   lcd = new LCD();
@@ -17,6 +23,12 @@ CNosh::CNosh() {
   rfid = new RFID();
 }
 
+/**
+ * @brief Setup for all components of cnosh
+ * 
+ * @return true if the initaltisation was succesfull
+ * @return false if something doesn't work
+ */
 bool CNosh::init() {
   // the following line is for using slave i2c-Bus
   // don't need this line when using master
@@ -35,7 +47,12 @@ bool CNosh::init() {
   iot.begin();
   return true;
 }
-
+/**
+ * @brief For starting the Tasks und initialisation
+ * 
+ * @return true 
+ * @return false 
+ */
 bool CNosh::begin() {
   Serial.println("Hello World!");
   delay(3000);
