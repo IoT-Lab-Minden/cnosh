@@ -23,8 +23,6 @@ bool Measure::init() {
   Serial.println("Adafruit VL53L0X test");
   if (!lox->begin()) {
     Serial.println(F("Failed to boot VL53L0X"));
-    while (1)
-      ;
   }
 }
 
