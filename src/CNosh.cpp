@@ -119,9 +119,9 @@ if (!iot.configuration.isKeySet(ConfigurationKey::cnoshConfiguration)) {
 }
 iot.configuration.dump();
 
-  xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
-  xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
-  xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 0, NULL);
+  // xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
+  // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
+  // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 0, NULL);
   return true;
 }
 
@@ -143,6 +143,25 @@ void CNosh::initWebserver(Configuration config) {
       cat["extra_amount_count"] = _jsonBuffer.strdup(iot.configuration.get("c1_extra_amount_count"));
       cat["c1_extra_delay"] = _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
       cat["c1_created"] = _jsonBuffer.strdup(iot.configuration.get("c1_created"));
+
+      JsonObject &feedingtimes = _jsonData.createNestedObject("feedingtimes");
+      feedingtimes["time_1_h"] = _jsonBuffer.strdup(iot.configuration.get("time_1_h"));
+      feedingtimes["time_1_m"] = _jsonBuffer.strdup(iot.configuration.get("time_1_m"));
+      feedingtimes["time_2_h"] = _jsonBuffer.strdup(iot.configuration.get("time_2_h"));
+      feedingtimes["time_2_m"] = _jsonBuffer.strdup(iot.configuration.get("time_2_m"));
+      feedingtimes["time_3_h"] = _jsonBuffer.strdup(iot.configuration.get("time_3_h"));
+      feedingtimes["time_3_m"] = _jsonBuffer.strdup(iot.configuration.get("time_3_m"));
+      feedingtimes["time_4_h"] = _jsonBuffer.strdup(iot.configuration.get("time_4_h"));
+      feedingtimes["time_4_m"] = _jsonBuffer.strdup(iot.configuration.get("time_4_m"));
+      feedingtimes["time_amount_size"] = _jsonBuffer.strdup(iot.configuration.get("time_amount_size"));
+
+      JsonObject &statistics = _jsonData.createNestedObject("statistics");
+      statistics["configured"] = _jsonBuffer.strdup(iot.configuration.get("cnoshConfiguration"));
+      statistics["startdate"] = _jsonBuffer.strdup(iot.configuration.get("startdate"));
+      statistics["last_savedate"] = _jsonBuffer.strdup(iot.configuration.get("last_savedate"));
+      statistics["last_feedingtime"] = _jsonBuffer.strdup(iot.configuration.get("last_feedingtime"));
+      statistics["total_amount_time"] = _jsonBuffer.strdup(iot.configuration.get("total_amount_time"));
+      statistics["total_amount_extra"] = _jsonBuffer.strdup(iot.configuration.get("total_amount_extra"));
 
 			response->setLength();
 			// NOTE: AsyncServer.send(ptr* foo) deletes `response` after async send.
