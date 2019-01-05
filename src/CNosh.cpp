@@ -24,12 +24,15 @@ bool CNosh::init() {
 
   pinMode(BUTTON_PIN, INPUT_PULLDOWN);
 
-  iot.begin();
+
+  
   lcd->init();
   rfid->init();
   measure->init();
 
-  this->initConfiguration();
+  initConfiguration();
+  initWebserver(iot.configuration);
+  iot.begin();
   return true;
 }
 
@@ -69,26 +72,83 @@ void CNosh::startTaskButton(void *servoObj) {
 }
 
 bool CNosh::initConfiguration() {
-  /*  if (!iot.configuration.isKeySet(ConfigurationKey::cnoshConfiguration))
-{
-iot.configuration.set(ConfigurationKey::time_1_h, "9");
-iot.configuration.set(ConfigurationKey::time_1_m, "15");
-iot.configuration.set(ConfigurationKey::time_2_h, "13");
-iot.configuration.set(ConfigurationKey::time_2_m, "0");
-iot.configuration.set(ConfigurationKey::time_3_h, "19");
-iot.configuration.set(ConfigurationKey::time_3_m, "30");
-iot.configuration.set(ConfigurationKey::time_4_h, "22");
-iot.configuration.set(ConfigurationKey::time_4_m, "00");
-iot.configuration.set(ConfigurationKey::time_amount_size, "M");
-iot.configuration.set(ConfigurationKey::cnoshConfiguration, "true");
-iot.configuration.save();
+if (!iot.configuration.isKeySet(ConfigurationKey::cnoshConfiguration)) {
+  iot.configuration.set(ConfigurationKey::time_1_h, "9");
+  iot.configuration.set(ConfigurationKey::time_1_m, "15");
+  iot.configuration.set(ConfigurationKey::time_2_h, "13");
+  iot.configuration.set(ConfigurationKey::time_2_m, "0");
+  iot.configuration.set(ConfigurationKey::time_3_h, "19");
+  iot.configuration.set(ConfigurationKey::time_3_m, "30");
+  iot.configuration.set(ConfigurationKey::time_4_h, "22");
+  iot.configuration.set(ConfigurationKey::time_4_m, "00");
+  iot.configuration.set(ConfigurationKey::time_amount_size, "M");
+
+  iot.configuration.set(ConfigurationKey::c1_name, "Cat 1");
+  iot.configuration.set(ConfigurationKey::c1_uid, "");
+  iot.configuration.set(ConfigurationKey::c1_lastfeedingtime, "");
+  iot.configuration.set(ConfigurationKey::c1_extra_amount_size, "");
+  iot.configuration.set(ConfigurationKey::c1_extra_amount_number, "");
+  iot.configuration.set(ConfigurationKey::c1_extra_amount_count, "");
+  iot.configuration.set(ConfigurationKey::c1_extra_delay, "");
+  iot.configuration.set(ConfigurationKey::c1_created, "0");
+  iot.configuration.set(ConfigurationKey::c2_name, "Cat 2");
+  iot.configuration.set(ConfigurationKey::c2_uid, "");
+  iot.configuration.set(ConfigurationKey::c2_lastfeedingtime, "");
+  iot.configuration.set(ConfigurationKey::c2_extra_amount_size, "");
+  iot.configuration.set(ConfigurationKey::c2_extra_amount_number, "");
+  iot.configuration.set(ConfigurationKey::c2_extra_amount_count, "");
+  iot.configuration.set(ConfigurationKey::c2_extra_delay, "");
+  iot.configuration.set(ConfigurationKey::c2_created, "0");
+  iot.configuration.set(ConfigurationKey::c3_name, "Cat 3");
+  iot.configuration.set(ConfigurationKey::c3_uid, "");
+  iot.configuration.set(ConfigurationKey::c3_lastfeedingtime, "");
+  iot.configuration.set(ConfigurationKey::c3_extra_amount_size, "");
+  iot.configuration.set(ConfigurationKey::c3_extra_amount_number, "");
+  iot.configuration.set(ConfigurationKey::c3_extra_amount_count, "");
+  iot.configuration.set(ConfigurationKey::c3_extra_delay, "");
+  iot.configuration.set(ConfigurationKey::c3_created, "0");
+
+  iot.configuration.set(ConfigurationKey::startdate, "");
+  iot.configuration.set(ConfigurationKey::last_savedate, "");
+  iot.configuration.set(ConfigurationKey::last_feedingtime, "");
+  iot.configuration.set(ConfigurationKey::total_amount_time, "");
+  iot.configuration.set(ConfigurationKey::total_amount_extra, "");
+
+  iot.configuration.set(ConfigurationKey::cnoshConfiguration, "true");
+  iot.configuration.save();
 }
-iot.configuration.dump(); */
+iot.configuration.dump();
 
   xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
   xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
   xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 0, NULL);
   return true;
+}
+
+void CNosh::initWebserver(Configuration config) {
+  iot.web.server.on("/cnosh.json" , HTTP_GET, [&config, this](AsyncWebServerRequest * request)
+	{
+			AsyncJsonResponse *response = new AsyncJsonResponse();
+			DynamicJsonBuffer _jsonBuffer;
+
+			JsonObject &_jsonData = response->getRoot();
+			JsonArray &cats = _jsonData.createNestedArray("cats");
+
+      JsonObject &cat = cats.createNestedObject();
+      cat["name"] = _jsonBuffer.strdup(iot.configuration.get("c1_name"));
+      cat["uid"] = _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
+      cat["lastfeedingtime"] = _jsonBuffer.strdup(iot.configuration.get("c1_lastfeedingtime"));
+      cat["extra_amount_size"] = _jsonBuffer.strdup(iot.configuration.get("c1_extra_amount_size"));
+      cat["extra_amount_number"] = _jsonBuffer.strdup(iot.configuration.get("c1_extra_amount_number"));
+      cat["extra_amount_count"] = _jsonBuffer.strdup(iot.configuration.get("c1_extra_amount_count"));
+      cat["c1_extra_delay"] = _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
+      cat["c1_created"] = _jsonBuffer.strdup(iot.configuration.get("c1_created"));
+
+			response->setLength();
+			// NOTE: AsyncServer.send(ptr* foo) deletes `response` after async send.
+			// As this is not documented in the header there: thanks for nothing.
+			request->send(response);
+	});
 }
 
 void CNosh::detectRFID() { rfid->detectUnit(); }

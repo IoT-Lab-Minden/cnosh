@@ -23,5 +23,7 @@ const int SS_PIN = 5;
 const int SERVO_PIN = 12;
 // Button
 const int BUTTON_PIN = 13;
+// Other
+const int CNOSH_CAT_NUM = 3;
 
 #endif // CNOSH_CONST_h

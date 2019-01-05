@@ -37,6 +37,7 @@ private:
   JsonObject *settings;
 
   bool initConfiguration();
+  void initWebserver(Configuration );
   void detectRFID();
   void checkFeeding();
   void printLCD();
