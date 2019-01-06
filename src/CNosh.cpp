@@ -42,8 +42,9 @@ bool CNosh::init() {
     {
         Serial.println("Couldn't find RTC");
     }
-
     rtc.adjust(DateTime(__DATE__, __TIME__));
+    timeClient.begin();
+    timeClient.setTimeOffset(3600);
 
     initConfiguration();
 
@@ -71,8 +72,23 @@ bool CNosh::begin() {
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
-        cn->detectRFID();
+        //cn->detectRFID();
         // cn->checkFeeding();
+        while (!timeClient.update())
+        {
+            timeClient.forceUpdate();
+            Serial.println("klappt nicht !");
+        }
+        vTaskDelay(1500);
+        Serial.println(timeClient.getFormattedTime());
+        vTaskDelay(1500);
+        DateTime now = rtc.now();
+        Serial.println(" The Time is now: ");
+        Serial.println(now.hour());
+        Serial.println(":");
+        Serial.println(now.minute());
+        Serial.println(":");
+        Serial.println(now.second());
     }
 }
 
@@ -152,6 +168,7 @@ bool CNosh::initConfiguration() {
     }
 
     iot.configuration.dump();
+
     DateTime now = rtc.now();
     Serial.println(" The Time is now: ");
     Serial.println(now.hour());
@@ -159,7 +176,10 @@ bool CNosh::initConfiguration() {
     Serial.println(now.minute());
     Serial.println(":");
     Serial.println(now.second());
-    // xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
+
+    
+
+    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
     // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 0, NULL);
     return true;

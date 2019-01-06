@@ -15,12 +15,17 @@
 #include <Const.hpp>
 #include <LCD.hpp>
 #include <Measure.hpp>
+#include <NTPClient.h>
 #include <RFID.hpp>
-#include <ServoEngine.hpp>
 #include <RTClib.h>
+#include <ServoEngine.hpp>
+#include <WiFiUdp.h>
 
 static Basecamp iot{Basecamp::SetupModeWifiEncryption::secured};
 static RTC_DS3231 rtc;
+static WiFiUDP ntpUDP;
+static NTPClient timeClient(ntpUDP);
+
 
 class CNosh {
 public:
