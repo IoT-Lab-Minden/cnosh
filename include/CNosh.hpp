@@ -17,8 +17,10 @@
 #include <Measure.hpp>
 #include <RFID.hpp>
 #include <ServoEngine.hpp>
+#include <RTClib.h>
 
 static Basecamp iot{Basecamp::SetupModeWifiEncryption::secured};
+static RTC_DS3231 rtc;
 
 class CNosh {
 public:
@@ -33,8 +35,6 @@ private:
   RFID *rfid;
   Measure *measure;
   ServoEngine *servo;
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject *settings;
 
   bool initConfiguration();
   void initWebserver(Configuration);
