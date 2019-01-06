@@ -1,9 +1,9 @@
 /*
    CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
-   Written by 
+   Written by
    - Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
    - Dario Leunig (dleunig@fh-bielefeld.de)
-   
+
    Licensed under GPLv3. See LICENSE for details.
    */
 
@@ -12,33 +12,44 @@
 
 #include <Arduino.h>
 #include <Basecamp.hpp>
-#include <LCD.hpp>
-#include <RFID.hpp>
-#include <Measure.hpp>
-#include <ServoEngine.hpp>
 #include <Const.hpp>
+#include <LCD.hpp>
+#include <Measure.hpp>
+#include <NTPClient.h>
+#include <RFID.hpp>
+#include <RTClib.h>
+#include <ServoEngine.hpp>
+#include <WiFiUdp.h>
 
-static Basecamp iot {
-  Basecamp::
-  SetupModeWifiEncryption::
-  secured
-};
+static Basecamp iot{Basecamp::SetupModeWifiEncryption::secured};
+static RTC_DS3231 rtc;
+static WiFiUDP ntpUDP;
+static NTPClient timeClient(ntpUDP);
+
 
 class CNosh {
-    public:
-        CNosh();
-        ~CNosh() = default;
+public:
+  CNosh();
+  ~CNosh() = default;
 
-        bool begin();
-        bool init();
-        
-    private:
-        LCD *lcd;
-        RFID *rfid;
-        Measure *measure;
-        ServoEngine *servo;
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject *settings;
+  bool begin();
+  bool init();
+
+private:
+  LCD *lcd;
+  RFID *rfid;
+  Measure *measure;
+  ServoEngine *servo;
+
+  bool initConfiguration();
+  void initWebserver(Configuration);
+  void detectRFID();
+  void checkFeeding();
+  void printLCD();
+
+  static void startTaskButton(void *);
+  static void startTaskCNosh(void *);
+  static void startTaskLCD(void *);
 };
 
 #endif // CNOSH_H_

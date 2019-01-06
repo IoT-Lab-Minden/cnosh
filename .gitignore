@@ -4,6 +4,8 @@
 # General
 .DS_Store
 
+# Doxygen
+doc/doxygen_doc
 # Visual Paradigm
 *.bak*
 *.lck
