@@ -45,14 +45,16 @@ bool CNosh::init() {
     rtc.adjust(DateTime(__DATE__, __TIME__));
     timeClient.begin();
     timeClient.setTimeOffset(3600);
+    
+    lcd->init();
+    rfid->init();
+    measure->init();
 
     initConfiguration();
 
 
 
-    lcd->init();
-    rfid->init();
-    measure->init();
+    
 
     return true;
 }
@@ -179,9 +181,9 @@ bool CNosh::initConfiguration() {
 
     
 
-    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 0, NULL);
+    //xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 4, NULL);
     // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
-    // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 0, NULL);
+    xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
     return true;
 }
 
@@ -261,14 +263,26 @@ void CNosh::checkFeeding() {
 }
 
 void CNosh::printLCD() {
-    String level = "FillLevel: ";
-    int distance = measure->readDistance();
-    if (distance < 0) {
-        level.concat("outofrange");
-    } else {
-        level.concat(distance);
-    }
+    // String level = "FillLevel: ";
+    // int distance = measure->readDistance();
+    // if (distance < 0) {
+    //     level.concat("outofrange");
+    // } else {
+    //     level.concat(distance);
+    // }
+    // lcd->clear();
+    // lcd->printLine("Welcome to CNosh", 0);
+    // lcd->printLine(level, 1);
+    DateTime now = rtc.now();
+    String act_time;
+    act_time.concat(now.hour());
+    act_time.concat(":");
+    act_time.concat(now.minute());
+    act_time.concat(":");
+    act_time.concat(now.second());
     lcd->clear();
-    lcd->printLine("Welcome to CNosh", 0);
-    lcd->printLine(level, 1);
+    lcd->printLine("Aktuelle Uhrzeit:", 0);
+    Serial.println(act_time);
+    //lcd->printLine(timeClient.getFormattedTime(), 1);
+    lcd->printLine(act_time, 1);
 }
