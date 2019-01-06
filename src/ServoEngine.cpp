@@ -22,4 +22,4 @@ void ServoEngine::rotate(int direction, int duration) {
   }
 }
 
-void ServoEngine::stop() { servo->write(95); }
+void ServoEngine::stop() { servo->write(SERVO_STOP); }
