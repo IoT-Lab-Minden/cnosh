@@ -15,16 +15,18 @@
 #include <SPI.h>
 
 class RFID {
-public:
-  RFID();
-  ~RFID() = default;
+  public:
+    RFID();
+    ~RFID() = default;
 
-  void dumpToSerial();
-  bool init();
-  void detectUnit();
+    bool init();
+    bool detectUnit();
+    String getUID();
 
-private:
-  MFRC522 *mfrc522;
+  private:
+    MFRC522 *mfrc522;
+    void printHex(byte *, byte);
+    void printDec(byte *, byte);
 };
 
 #endif // CNOSH_RFID_H

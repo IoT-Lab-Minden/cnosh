@@ -13,16 +13,16 @@
 #include <Adafruit_VL53L0X.h>
 
 class Measure {
-public:
-  Measure();
-  ~Measure() = default;
+  public:
+    Measure();
+    ~Measure() = default;
 
-  bool init();
-  int readDistance();
+    bool init();
+    int readDistance();
 
-private:
-  Adafruit_VL53L0X *lox;
-  VL53L0X_RangingMeasurementData_t *measure;
+  private:
+    Adafruit_VL53L0X *lox;
+    VL53L0X_RangingMeasurementData_t *measure;
 };
 
 #endif // CNOSH_MEASURE_H

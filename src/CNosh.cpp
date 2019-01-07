@@ -37,24 +37,19 @@ bool CNosh::init() {
     Wire.begin(SDA_SLAVE, SCL_SLAVE);
 
     pinMode(BUTTON_PIN, INPUT_PULLDOWN);
-    
-    if (!rtc.begin())
-    {
+
+    if (!rtc.begin()) {
         Serial.println("Couldn't find RTC");
     }
     rtc.adjust(DateTime(__DATE__, __TIME__));
     timeClient.begin();
     timeClient.setTimeOffset(3600);
-    
+
     lcd->init();
     rfid->init();
     measure->init();
 
     initConfiguration();
-
-
-
-    
 
     return true;
 }
@@ -74,23 +69,8 @@ bool CNosh::begin() {
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
-        //cn->detectRFID();
+        cn->detectRFID();
         // cn->checkFeeding();
-        while (!timeClient.update())
-        {
-            timeClient.forceUpdate();
-            Serial.println("klappt nicht !");
-        }
-        vTaskDelay(1500);
-        Serial.println(timeClient.getFormattedTime());
-        vTaskDelay(1500);
-        DateTime now = rtc.now();
-        Serial.println(" The Time is now: ");
-        Serial.println(now.hour());
-        Serial.println(":");
-        Serial.println(now.minute());
-        Serial.println(":");
-        Serial.println(now.second());
     }
 }
 
@@ -98,7 +78,6 @@ void CNosh::startTaskLCD(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
         cn->printLCD();
-        vTaskDelay(2000);
     }
 }
 
@@ -165,7 +144,7 @@ bool CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::total_amount_time, "");
         iot.configuration.set(ConfigurationKey::total_amount_extra, "");
         iot.configuration.set(ConfigurationKey::cnoshConfiguration, "true");
-        
+
         iot.configuration.save();
     }
 
@@ -179,11 +158,9 @@ bool CNosh::initConfiguration() {
     Serial.println(":");
     Serial.println(now.second());
 
-    
-
-    //xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 4, NULL);
+    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
     // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
-    xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
+    // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
     return true;
 }
 
@@ -256,33 +233,45 @@ void CNosh::initWebserver(Configuration config) {
         });
 }
 
-void CNosh::detectRFID() { rfid->detectUnit(); }
+void CNosh::detectRFID() {
+    if (rfid->detectUnit())
+        rfid->getUID();
+}
 
 void CNosh::checkFeeding() {
     // check feeding time
 }
 
 void CNosh::printLCD() {
-    // String level = "FillLevel: ";
-    // int distance = measure->readDistance();
-    // if (distance < 0) {
-    //     level.concat("outofrange");
-    // } else {
-    //     level.concat(distance);
-    // }
-    // lcd->clear();
-    // lcd->printLine("Welcome to CNosh", 0);
-    // lcd->printLine(level, 1);
-    DateTime now = rtc.now();
-    String act_time;
-    act_time.concat(now.hour());
-    act_time.concat(":");
-    act_time.concat(now.minute());
-    act_time.concat(":");
-    act_time.concat(now.second());
-    lcd->clear();
-    lcd->printLine("Aktuelle Uhrzeit:", 0);
-    Serial.println(act_time);
-    //lcd->printLine(timeClient.getFormattedTime(), 1);
-    lcd->printLine(act_time, 1);
+    if (iot.configuration.get(ConfigurationKey::wifiConfigured)
+            .equalsIgnoreCase("False")) {
+        lcd->clear();
+        lcd->printLine("IP: 192.168.4.1", 0);
+        lcd->printLine(
+            iot.configuration.get(ConfigurationKey::accessPointSecret), 1);
+        vTaskDelay(3000);
+    } else if (WiFi.status() != WL_CONNECTED) {
+        lcd->clear();
+        lcd->printLine("WLAN ERR-AP-MODE ", 0);
+        lcd->printLine(
+            iot.configuration.get(ConfigurationKey::accessPointSecret), 1);
+        vTaskDelay(3000);
+        lcd->clear();
+        lcd->printLine("IP: 192.168.4.1", 0);
+        lcd->printLine(
+            iot.configuration.get(ConfigurationKey::accessPointSecret), 1);
+        vTaskDelay(3000);
+    } else {
+        String level = "FillLevel: ";
+        int distance = measure->readDistance();
+        if (distance < 0) {
+            level.concat("outofrange");
+        } else {
+            level.concat(distance);
+        }
+        lcd->clear();
+        lcd->printLine("Welcome to CNosh", 0);
+        lcd->printLine(level, 1);
+        vTaskDelay(3000);
+    }
 }

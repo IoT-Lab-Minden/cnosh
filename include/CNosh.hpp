@@ -26,30 +26,29 @@ static RTC_DS3231 rtc;
 static WiFiUDP ntpUDP;
 static NTPClient timeClient(ntpUDP);
 
-
 class CNosh {
-public:
-  CNosh();
-  ~CNosh() = default;
+  public:
+    CNosh();
+    ~CNosh() = default;
 
-  bool begin();
-  bool init();
+    bool begin();
+    bool init();
 
-private:
-  LCD *lcd;
-  RFID *rfid;
-  Measure *measure;
-  ServoEngine *servo;
+  private:
+    LCD *lcd;
+    RFID *rfid;
+    Measure *measure;
+    ServoEngine *servo;
 
-  bool initConfiguration();
-  void initWebserver(Configuration);
-  void detectRFID();
-  void checkFeeding();
-  void printLCD();
+    bool initConfiguration();
+    void initWebserver(Configuration);
+    void detectRFID();
+    void checkFeeding();
+    void printLCD();
 
-  static void startTaskButton(void *);
-  static void startTaskCNosh(void *);
-  static void startTaskLCD(void *);
+    static void startTaskButton(void *);
+    static void startTaskCNosh(void *);
+    static void startTaskLCD(void *);
 };
 
 #endif // CNOSH_H_
