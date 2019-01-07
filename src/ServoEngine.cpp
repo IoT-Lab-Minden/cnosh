@@ -10,16 +10,16 @@
 #include <ServoEngine.hpp>
 
 ServoEngine::ServoEngine() {
-  servo = new Servo();
-  servo->attach(SERVO_PIN);
+    servo = new Servo();
+    servo->attach(SERVO_PIN);
 }
 
 void ServoEngine::rotate(int direction, int duration) {
-  servo->write(direction);
-  if (duration != 0) {
-    delay(duration);
-    this->stop();
-  }
+    servo->write(direction);
+    if (duration != 0) {
+        delay(duration);
+        this->stop();
+    }
 }
 
 void ServoEngine::stop() { servo->write(SERVO_STOP); }

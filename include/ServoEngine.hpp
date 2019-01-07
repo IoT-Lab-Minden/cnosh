@@ -14,15 +14,15 @@
 #include <Servo.h>
 
 class ServoEngine {
-public:
-  ServoEngine();
-  ~ServoEngine() = default;
+  public:
+    ServoEngine();
+    ~ServoEngine() = default;
 
-  void rotate(int, int);
-  void stop();
+    void rotate(int, int);
+    void stop();
 
-private:
-  Servo *servo;
+  private:
+    Servo *servo;
 };
 
 #endif // CNOSH_SERVOENGINE_H

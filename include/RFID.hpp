@@ -25,7 +25,7 @@ class RFID {
 
   private:
     MFRC522 *mfrc522;
-    void printHex(byte*, byte);
+    void printHex(byte *, byte);
     void printDec(byte *, byte);
 };
 

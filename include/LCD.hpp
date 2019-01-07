@@ -15,16 +15,16 @@
 #include <Wire.h>
 
 class LCD {
-public:
-  LCD();
-  ~LCD() = default;
+  public:
+    LCD();
+    ~LCD() = default;
 
-  void printLine(String, int);
-  bool init();
-  void clear();
+    void printLine(String, int);
+    bool init();
+    void clear();
 
-private:
-  LiquidCrystal_I2C *lcd;
+  private:
+    LiquidCrystal_I2C *lcd;
 };
 
 #endif // CNOSH_LCD_H
