@@ -69,22 +69,8 @@ bool CNosh::begin() {
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
-        // cn->detectRFID();
+        cn->detectRFID();
         // cn->checkFeeding();
-        while (!timeClient.update()) {
-            timeClient.forceUpdate();
-            Serial.println("klappt nicht !");
-        }
-        vTaskDelay(1500);
-        Serial.println(timeClient.getFormattedTime());
-        vTaskDelay(1500);
-        DateTime now = rtc.now();
-        Serial.println(" The Time is now: ");
-        Serial.println(now.hour());
-        Serial.println(":");
-        Serial.println(now.minute());
-        Serial.println(":");
-        Serial.println(now.second());
     }
 }
 
@@ -172,9 +158,9 @@ bool CNosh::initConfiguration() {
     Serial.println(":");
     Serial.println(now.second());
 
-    // xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 4, NULL);
+    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
     // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
-    xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
+    // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
     return true;
 }
 
@@ -247,7 +233,10 @@ void CNosh::initWebserver(Configuration config) {
         });
 }
 
-void CNosh::detectRFID() { rfid->detectUnit(); }
+void CNosh::detectRFID() {
+    if (rfid->detectUnit())
+        rfid->getUID();
+}
 
 void CNosh::checkFeeding() {
     // check feeding time
@@ -256,7 +245,6 @@ void CNosh::checkFeeding() {
 void CNosh::printLCD() {
     if (iot.configuration.get(ConfigurationKey::wifiConfigured)
             .equalsIgnoreCase("False")) {
-        Serial.println(iot.configuration.get(ConfigurationKey::wifiConfigured));
         lcd->clear();
         lcd->printLine("IP: 192.168.4.1", 0);
         lcd->printLine(
@@ -274,10 +262,8 @@ void CNosh::printLCD() {
             iot.configuration.get(ConfigurationKey::accessPointSecret), 1);
         vTaskDelay(3000);
     } else {
-        Serial.println("Level");
         String level = "FillLevel: ";
         int distance = measure->readDistance();
-        Serial.println(distance);
         if (distance < 0) {
             level.concat("outofrange");
         } else {
