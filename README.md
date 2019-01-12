@@ -28,7 +28,7 @@ void setup() {
 }
 ```
 
-## Documenation
+## Documentation
 [GitHub Pages](https://dleunig.github.io/cnosh/)
 
 ## Dependency libraries
