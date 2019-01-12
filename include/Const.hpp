@@ -21,6 +21,8 @@ const int RST_PIN = 2;
 const int SS_PIN = 5;
 // Servo
 const int SERVO_PIN = 12;
+const int SERVO_ROTATE_FORWARD = 180;
+const int SERVO_ROTATE_BACKWARD = 60;
 const int SERVO_STOP = 95;
 // Button
 const int BUTTON_PIN = 13;

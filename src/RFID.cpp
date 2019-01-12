@@ -1,5 +1,5 @@
 /**
- * @file LCD.cpp
+ * @file RFID.cpp
  * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
  * @author Dario Leunig (dleunig@fh-bielefeld.de)
  * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control

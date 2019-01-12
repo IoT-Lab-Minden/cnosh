@@ -104,7 +104,7 @@ void CNosh::startTaskButton(void *servoObj) {
         if (press1 == LOW) {
             servoTest->stop();
         } else {
-            servoTest->rotate(180, 0);
+            servoTest->rotate(SERVO_ROTATE_FORWARD, 0);
         }
     }
 }
