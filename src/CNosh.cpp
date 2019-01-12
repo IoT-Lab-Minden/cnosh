@@ -12,7 +12,7 @@
 #include <CNosh.hpp>
 
 /**
- * @brief Construct a new CNosh::CNosh object
+ * @brief Construct a new CNosh::CNosh object with all needed components
  *
  */
 CNosh::CNosh() {
@@ -23,23 +23,17 @@ CNosh::CNosh() {
 }
 
 /**
- * @brief For starting the Tasks und initialisation
- *
- * @return true
- * @return false
+ * @brief Starts the initialisation process
  */
-bool CNosh::begin() {
+void CNosh::begin() {
     init();
-    return true;
 }
 
 /**
- * @brief Setup for all components of cnosh
- *
- * @return true if the initaltisation was succesfull
- * @return false if something doesn't work
+ * @brief Setup for all components of cnosh, including the webserver and cnosh
+ * configuration data
  */
-bool CNosh::init() {
+void CNosh::init() {
     iot.begin();
     initWebserver(iot.configuration);
 
@@ -49,22 +43,29 @@ bool CNosh::init() {
 
     pinMode(BUTTON_PIN, INPUT_PULLDOWN);
 
+    // initialize the RT clock and NTP clock
     if (!rtc.begin()) {
         Serial.println("Couldn't find RTC");
     }
     rtc.adjust(DateTime(__DATE__, __TIME__));
     timeClient.begin();
-    timeClient.setTimeOffset(3600);
+    timeClient.setTimeOffset(TIMEZONE_OFFSET);
 
+    // initialize all components
     lcd->init();
     rfid->init();
     measure->init();
 
     initConfiguration();
-
-    return true;
 }
 
+/**
+ * @brief Task to start the checking process of rfid and feedingtimes (infinity
+ * loop)
+ *
+ * @param cnoshObj Takes the complete cnosh object, to have access to all
+ * components
+ */
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
@@ -73,6 +74,15 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
     }
 }
 
+/**
+ * @brief Task to start the output on the LCD display (infinity
+ * loop)
+ * It checks the WLAN configuration for it self and prints the right output to
+ * the LCD
+ *
+ * @param cnoshObj Takes the complete cnosh object, to have access to all
+ * components
+ */
 void CNosh::startTaskLCD(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
@@ -80,6 +90,12 @@ void CNosh::startTaskLCD(void *cnoshObj) {
     }
 }
 
+/**
+ * @brief Task to start the checking process of the dispender button (infinity
+ * loop)
+ *
+ * @param servoObj Takes the Servo-object to access the engine
+ */
 void CNosh::startTaskButton(void *servoObj) {
     int press1 = 0;
     ServoEngine *servoTest = (ServoEngine *)servoObj;
@@ -93,7 +109,12 @@ void CNosh::startTaskButton(void *servoObj) {
     }
 }
 
-bool CNosh::initConfiguration() {
+/**
+ * @brief Creates the default configuration data and saves it. 
+ * Creats and starts the freeRTOS-tasks 
+ * 
+ */
+void CNosh::initConfiguration() {
     iot.configuration.load();
     if (!iot.configuration.get(ConfigurationKey::cnoshConfiguration)
              .equalsIgnoreCase("1")) {
@@ -159,9 +180,13 @@ bool CNosh::initConfiguration() {
     xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
     // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
-    return true;
 }
 
+/**
+ * @brief Creates all needed webserver routes that need to have access to the cnosh components
+ * 
+ * @param config Takes the Configuration-object of Basecamp to access the data
+ */
 void CNosh::initWebserver(Configuration config) {
     iot.web.server.on(
         "/cnosh.json", HTTP_GET,
@@ -231,15 +256,32 @@ void CNosh::initWebserver(Configuration config) {
         });
 }
 
+/**
+ * @brief This method detects a rfid-unit and checks if it is warranted to get fooder.
+ *
+ */
 void CNosh::detectRFID() {
     if (rfid->detectUnit())
         rfid->getUID();
 }
 
+/**
+ * @brief This method checks all configured feeding times. If it finds a match it will dispend fooder
+ * 
+ */
 void CNosh::checkFeeding() {
     // check feeding time
 }
 
+/**
+ * @brief Checks the state of cnosh and prints the respective information on the
+ * display every 3 seconds
+ *
+ * State-1 : Accesspoint-Mode -> print IP and accesspointsecret
+ * State-2: WLAN-Error -> print WLAN ERROR and print IP and accesspointsecret
+ * State-3 : Running -> print Filllevel
+ *
+ */
 void CNosh::printLCD() {
     if (iot.configuration.get(ConfigurationKey::wifiConfigured)
             .equalsIgnoreCase("False")) {

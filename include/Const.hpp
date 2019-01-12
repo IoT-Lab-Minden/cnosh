@@ -24,7 +24,10 @@ const int SERVO_PIN = 12;
 const int SERVO_STOP = 95;
 // Button
 const int BUTTON_PIN = 13;
+// Clock
+const int TIMEZONE_OFFSET = 3600;
 // Other
 const int CNOSH_CAT_NUM = 3;
+
 
 #endif // CNOSH_CONST_h

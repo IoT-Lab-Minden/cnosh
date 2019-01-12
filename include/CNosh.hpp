@@ -30,7 +30,7 @@ class CNosh {
   public:
     CNosh();
     ~CNosh() = default;
-    bool begin();
+    void begin();
 
   private:
     LCD *lcd;
@@ -38,8 +38,8 @@ class CNosh {
     Measure *measure;
     ServoEngine *servo;
 
-    bool init();
-    bool initConfiguration();
+    void init();
+    void initConfiguration();
     void initWebserver(Configuration);
     void detectRFID();
     void checkFeeding();
