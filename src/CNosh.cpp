@@ -97,8 +97,7 @@ void CNosh::startTaskButton(void *servoObj) {
 bool CNosh::initConfiguration() {
     iot.configuration.load();
     if (!iot.configuration.get(ConfigurationKey::cnoshConfiguration)
-             .equalsIgnoreCase("true")) {
-        Serial.println("ICH GEHE HIER SCHON WIEDER REIN!");
+             .equalsIgnoreCase("1")) {
         iot.configuration.set(ConfigurationKey::time_1_h, "9");
         iot.configuration.set(ConfigurationKey::time_1_m, "15");
         iot.configuration.set(ConfigurationKey::time_2_h, "13");
@@ -107,7 +106,7 @@ bool CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::time_3_m, "30");
         iot.configuration.set(ConfigurationKey::time_4_h, "22");
         iot.configuration.set(ConfigurationKey::time_4_m, "00");
-        iot.configuration.set(ConfigurationKey::time_amount_size, "M");
+        iot.configuration.set(ConfigurationKey::time_amount_size, "1");
 
         iot.configuration.set(ConfigurationKey::c1_name, "Balu");
         iot.configuration.set(ConfigurationKey::c1_uid, "12345");
@@ -117,7 +116,7 @@ bool CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::c1_extra_amount_number, "3");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_count, "0");
         iot.configuration.set(ConfigurationKey::c1_extra_delay, "60");
-        iot.configuration.set(ConfigurationKey::c1_created, "true");
+        iot.configuration.set(ConfigurationKey::c1_created, "1");
 
         iot.configuration.set(ConfigurationKey::c2_name, "Lisa");
         iot.configuration.set(ConfigurationKey::c2_uid, "54321");
@@ -127,23 +126,23 @@ bool CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::c2_extra_amount_number, "3");
         iot.configuration.set(ConfigurationKey::c2_extra_amount_count, "0");
         iot.configuration.set(ConfigurationKey::c2_extra_delay, "120");
-        iot.configuration.set(ConfigurationKey::c2_created, "true");
+        iot.configuration.set(ConfigurationKey::c2_created, "1");
 
         iot.configuration.set(ConfigurationKey::c3_name, "Cat_3");
         iot.configuration.set(ConfigurationKey::c3_uid, "");
         iot.configuration.set(ConfigurationKey::c3_lastfeedingtime, "");
-        iot.configuration.set(ConfigurationKey::c3_extra_amount_size, "");
-        iot.configuration.set(ConfigurationKey::c3_extra_amount_number, "");
-        iot.configuration.set(ConfigurationKey::c3_extra_amount_count, "");
-        iot.configuration.set(ConfigurationKey::c3_extra_delay, "");
-        iot.configuration.set(ConfigurationKey::c3_created, "false");
+        iot.configuration.set(ConfigurationKey::c3_extra_amount_size, "0");
+        iot.configuration.set(ConfigurationKey::c3_extra_amount_number, "0");
+        iot.configuration.set(ConfigurationKey::c3_extra_amount_count, "0");
+        iot.configuration.set(ConfigurationKey::c3_extra_delay, "0");
+        iot.configuration.set(ConfigurationKey::c3_created, "0");
 
         iot.configuration.set(ConfigurationKey::startdate, "");
         iot.configuration.set(ConfigurationKey::last_savedate, "");
         iot.configuration.set(ConfigurationKey::last_feedingtime, "");
-        iot.configuration.set(ConfigurationKey::total_amount_time, "");
-        iot.configuration.set(ConfigurationKey::total_amount_extra, "");
-        iot.configuration.set(ConfigurationKey::cnoshConfiguration, "true");
+        iot.configuration.set(ConfigurationKey::total_amount_time, "0");
+        iot.configuration.set(ConfigurationKey::total_amount_extra, "0");
+        iot.configuration.set(ConfigurationKey::cnoshConfiguration, "1");
 
         iot.configuration.save();
     }
