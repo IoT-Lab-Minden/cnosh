@@ -19,14 +19,12 @@ class RFID {
     RFID();
     ~RFID() = default;
 
-    bool init();
+    void init();
     bool detectUnit();
-    String getUID();
+    String getUidAsString();
 
   private:
     MFRC522 *mfrc522;
-    void printHex(byte *, byte);
-    void printDec(byte *, byte);
 };
 
 #endif // CNOSH_RFID_H

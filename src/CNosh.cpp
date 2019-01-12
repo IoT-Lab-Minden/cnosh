@@ -262,7 +262,7 @@ void CNosh::initWebserver(Configuration config) {
  */
 void CNosh::detectRFID() {
     if (rfid->detectUnit())
-        rfid->getUID();
+        Serial.println(rfid->getUidAsString());
 }
 
 /**
