@@ -20,7 +20,7 @@ class LCD {
     ~LCD() = default;
 
     void printLine(String, int);
-    bool init();
+    void init();
     void clear();
 
   private:
