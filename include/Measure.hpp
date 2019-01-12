@@ -17,7 +17,7 @@ class Measure {
     Measure();
     ~Measure() = default;
 
-    bool init();
+    void init();
     int readDistance();
 
   private:
