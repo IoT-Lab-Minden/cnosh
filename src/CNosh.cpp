@@ -23,6 +23,17 @@ CNosh::CNosh() {
 }
 
 /**
+ * @brief For starting the Tasks und initialisation
+ *
+ * @return true
+ * @return false
+ */
+bool CNosh::begin() {
+    init();
+    return true;
+}
+
+/**
  * @brief Setup for all components of cnosh
  *
  * @return true if the initaltisation was succesfull
@@ -51,18 +62,6 @@ bool CNosh::init() {
 
     initConfiguration();
 
-    return true;
-}
-/**
- * @brief For starting the Tasks und initialisation
- *
- * @return true
- * @return false
- */
-bool CNosh::begin() {
-
-    Serial.println("Hello World!");
-    delay(3000);
     return true;
 }
 
