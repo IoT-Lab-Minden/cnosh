@@ -10,8 +10,6 @@ If there are any questions, please send us a mail:
 - dleunig@fh-bielefeld.de
 - alexander.bergmann@fh-bielefeld.de
 
-
-
 ## Getting Started
 
 1. Make sure you can flash the ESP32 with the Arduino-IDE
@@ -29,6 +27,9 @@ void setup() {
   cnosh->begin();
 }
 ```
+
+## Documenation
+[GitHub Pages](https://dleunig.github.io/cnosh/)
 
 ## Dependency libraries
 
