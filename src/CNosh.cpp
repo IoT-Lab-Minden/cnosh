@@ -25,9 +25,7 @@ CNosh::CNosh() {
 /**
  * @brief Starts the initialisation process
  */
-void CNosh::begin() {
-    init();
-}
+void CNosh::begin() { init(); }
 
 /**
  * @brief Setup for all components of cnosh, including the webserver and cnosh
@@ -110,9 +108,9 @@ void CNosh::startTaskButton(void *servoObj) {
 }
 
 /**
- * @brief Creates the default configuration data and saves it. 
- * Creats and starts the freeRTOS-tasks 
- * 
+ * @brief Creates the default configuration data and saves it.
+ * Creats and starts the freeRTOS-tasks
+ *
  */
 void CNosh::initConfiguration() {
     iot.configuration.load();
@@ -183,8 +181,9 @@ void CNosh::initConfiguration() {
 }
 
 /**
- * @brief Creates all needed webserver routes that need to have access to the cnosh components
- * 
+ * @brief Creates all needed webserver routes that need to have access to the
+ * cnosh components
+ *
  * @param config Takes the Configuration-object of Basecamp to access the data
  */
 void CNosh::initWebserver(Configuration config) {
@@ -254,10 +253,156 @@ void CNosh::initWebserver(Configuration config) {
             // nothing.
             request->send(response);
         });
+
+    iot.web.server.on(
+        "/delete_cat", HTTP_POST,
+        [&config, this](AsyncWebServerRequest *request) {
+            if (request->params() == 0) {
+                DEBUG_PRINTLN("Refusing to take over an empty "
+                              "configuration submission.");
+                request->send(500);
+                return;
+            }
+
+            AsyncWebParameter *webParameter = request->getParam(0);
+            if (webParameter->isPost() && webParameter->value().length() != 0) {
+                Serial.print("Katze: ");
+                Serial.print(webParameter->name());
+                Serial.print(" soll gelöscht werden");
+
+                // configuration.set(webParameter->name().c_str(),
+                //                   webParameter->value().c_str());
+            }
+
+            // configuration.save();
+            request->send(201);
+        });
+    iot.web.server.on(
+        "/add_cat", HTTP_POST, [&config, this](AsyncWebServerRequest *request) {
+            if (request->params() == 0) {
+                DEBUG_PRINTLN("Refusing to take over an empty "
+                              "configuration submission.");
+                request->send(500);
+                return;
+            }
+
+            AsyncWebParameter *webParameter = request->getParam(0);
+            if (webParameter->isPost() && webParameter->value().length() != 0) {
+                Serial.print("Katze: ");
+                Serial.print(webParameter->name());
+                Serial.print(" soll hinzugefügt werden.");
+
+                // configuration.set(webParameter->name().c_str(),
+                //                   webParameter->value().c_str());
+            }
+
+            // configuration.save();
+            request->send(201);
+        });
+    iot.web.server.on(
+        "/submitfeedingtime", HTTP_POST,
+        [&config, this](AsyncWebServerRequest *request) {
+            if (request->params() == 0) {
+                DEBUG_PRINTLN(
+                    "Refusing to take over an empty configuration submission.");
+                request->send(500);
+                return;
+            }
+
+            for (int i = 0; i < request->params(); i++) {
+                AsyncWebParameter *webParameter = request->getParam(i);
+                if (webParameter->isPost() &&
+                    webParameter->value().length() != 0) {
+                    iot.configuration.set(webParameter->name().c_str(),
+                                          webParameter->value().c_str());
+                }
+            }
+
+            iot.configuration.save();
+            request->send(201);
+        });
+    iot.web.server.on(
+        "/set_amount", HTTP_POST,
+        [&config, this](AsyncWebServerRequest *request) {
+            if (request->params() == 0) {
+                DEBUG_PRINTLN(
+                    "Refusing to take over an empty configuration submission.");
+                request->send(500);
+                return;
+            }
+
+            for (int i = 0; i < request->params(); i++) {
+                AsyncWebParameter *webParameter = request->getParam(i);
+                if (webParameter->isPost() &&
+                    webParameter->value().length() != 0) {
+                    Serial.println(webParameter->name());
+                    Serial.println(webParameter->value());
+                }
+            }
+
+            // for (int i = 0; i < request->params(); i++) {
+            //     AsyncWebParameter *webParameter = request->getParam(i);
+            //     if (webParameter->isPost() &&
+            //         webParameter->value().length() != 0) {
+            //         iot.configuration.set(webParameter->name().c_str(),
+            //                               webParameter->value().c_str());
+            //     }
+            // }
+
+            // iot.configuration.save();
+            request->send(201);
+        });
+    iot.web.server.on(
+        "/set_rfid", HTTP_POST,
+        [&config, this](AsyncWebServerRequest *request) {
+            if (request->params() == 0) {
+                DEBUG_PRINTLN(
+                    "Refusing to take over an empty configuration submission.");
+                request->send(500);
+                return;
+            }
+
+            for (int i = 0; i < request->params(); i++) {
+                AsyncWebParameter *webParameter = request->getParam(i);
+                if (webParameter->isPost() &&
+                    webParameter->value().length() != 0) {
+                    Serial.println(webParameter->name());
+                    Serial.println(webParameter->value());
+                }
+            }
+
+            // for (int i = 0; i < request->params(); i++) {
+            //     AsyncWebParameter *webParameter = request->getParam(i);
+            //     if (webParameter->isPost() &&
+            //         webParameter->value().length() != 0) {
+            //         iot.configuration.set(webParameter->name().c_str(),
+            //                               webParameter->value().c_str());
+            //     }
+            // }
+
+            // iot.configuration.save();
+            request->send(201);
+        });
+    iot.web.server.on("/reset_system", HTTP_POST,
+                      [&config, this](AsyncWebServerRequest *request) {
+                          Serial.println("resetting the system to default");
+                          request->send(201);
+                      });
+    iot.web.server.on("/reset_statistics", HTTP_POST,
+                      [&config, this](AsyncWebServerRequest *request) {
+                          Serial.println("resetting statistics");
+                          request->send(201);
+                      });
+    iot.web.server.on("/search_rfid", HTTP_POST,
+                      [&config, this](AsyncWebServerRequest *request) {
+                          Serial.println("searching rfid");
+                          request->send(201);
+                      });
 }
 
 /**
- * @brief This method detects a rfid-unit and checks if it is warranted to get fooder.
+ * @brief This method detects a rfid-unit and checks if it is warranted to get
+ * fooder.
  *
  */
 void CNosh::detectRFID() {
@@ -266,8 +411,9 @@ void CNosh::detectRFID() {
 }
 
 /**
- * @brief This method checks all configured feeding times. If it finds a match it will dispend fooder
- * 
+ * @brief This method checks all configured feeding times. If it finds a match
+ * it will dispend fooder
+ *
  */
 void CNosh::checkFeeding() {
     // check feeding time
