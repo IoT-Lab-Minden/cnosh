@@ -68,7 +68,7 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
         cn->detectRFID();
-        // cn->checkFeeding();
+        cn->checkFeeding("");
     }
 }
 
@@ -119,7 +119,7 @@ void CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::time_1_h, "9");
         iot.configuration.set(ConfigurationKey::time_1_m, "15");
         iot.configuration.set(ConfigurationKey::time_2_h, "13");
-        iot.configuration.set(ConfigurationKey::time_2_m, "0");
+        iot.configuration.set(ConfigurationKey::time_2_m, "00");
         iot.configuration.set(ConfigurationKey::time_3_h, "19");
         iot.configuration.set(ConfigurationKey::time_3_m, "30");
         iot.configuration.set(ConfigurationKey::time_4_h, "22");
@@ -127,7 +127,7 @@ void CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::time_amount_size, "1");
 
         iot.configuration.set(ConfigurationKey::c1_name, "Balu");
-        iot.configuration.set(ConfigurationKey::c1_uid, "12345");
+        iot.configuration.set(ConfigurationKey::c1_uid, "112 130 84 00");
         iot.configuration.set(ConfigurationKey::c1_lastfeedingtime,
                               "2019-01-18T16:00:13Z");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_size, "1");
@@ -167,16 +167,8 @@ void CNosh::initConfiguration() {
 
     iot.configuration.dump();
 
-    DateTime now = rtc.now();
-    Serial.println(" The Time is now: ");
-    Serial.println(now.hour());
-    Serial.println(":");
-    Serial.println(now.minute());
-    Serial.println(":");
-    Serial.println(now.second());
-
     xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
-    // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
+    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
 }
 
@@ -406,8 +398,24 @@ void CNosh::initWebserver(Configuration config) {
  *
  */
 void CNosh::detectRFID() {
-    if (rfid->detectUnit())
-        Serial.println(rfid->getUidAsString());
+    if (rfid->detectUnit()) {
+
+        if (iot.configuration.get("c1_uid").equals(rfid->getUidAsString())) {
+            Serial.print(iot.configuration.get("c1_name"));
+            Serial.println(" wurde erkannt!");
+            checkFeeding("c1");
+        }
+        if (iot.configuration.get("c2_uid").equals(rfid->getUidAsString())) {
+            Serial.print(iot.configuration.get("c2_name"));
+            checkFeeding("c2");
+            Serial.println(" wurde erkannt!");
+        }
+        if (iot.configuration.get("c3_uid").equals(rfid->getUidAsString())) {
+            Serial.print(iot.configuration.get("c3_name"));
+            checkFeeding("c3");
+            Serial.println(" wurde erkannt!");
+        }
+    }
 }
 
 /**
@@ -415,17 +423,145 @@ void CNosh::detectRFID() {
  * it will dispend fooder
  *
  */
-void CNosh::checkFeeding() {
-    // check feeding time
+void CNosh::checkFeeding(String cat) {
+    DateTime now = rtc.now();
+    bool time_output = false;
+    bool cat_output = false;
+    if (cat.equalsIgnoreCase("")) {
+        // function call without cat_uid
+        if (iot.configuration.get("time_1_h").toInt() == now.hour() &&
+            iot.configuration.get("time_1_m").toInt() == now.minute()) {
+            servo->rotate(SERVO_ROTATE_FORWARD,
+                          iot.configuration.get("time_amount_size").toInt());
+            time_output = true;
+        }
+        if (iot.configuration.get("time_2_h").toInt() == now.hour() &&
+            iot.configuration.get("time_2_m").toInt() == now.minute()) {
+            servo->rotate(SERVO_ROTATE_FORWARD,
+                          iot.configuration.get("time_amount_size").toInt());
+            time_output = true;
+        }
+        if (iot.configuration.get("time_3_h").toInt() == now.hour() &&
+            iot.configuration.get("time_3_m").toInt() == now.minute()) {
+            servo->rotate(SERVO_ROTATE_FORWARD,
+                          iot.configuration.get("time_amount_size").toInt());
+            time_output = true;
+        }
+        if (iot.configuration.get("time_4_h").toInt() == now.hour() &&
+            iot.configuration.get("time_4_m").toInt() == now.minute()) {
+            servo->rotate(SERVO_ROTATE_FORWARD,
+                          iot.configuration.get("time_amount_size").toInt());
+            time_output = true;
+        }
+    } else {
+        if (cat.equals("c1")) {
+            if (checkFeedingLock("c1_lastfeedingtime", "c1_extra_delay",
+                                 now.hour(), now.minute(), now.day()) &&
+                checkFeedingExtra("c1_extra_amount_number",
+                                  "c1_extra_amount_count")) {
+                servo->rotate(
+                    SERVO_ROTATE_FORWARD,
+                    iot.configuration.get("c1_extra_amount_size").toInt());
+                iot.configuration.set("c1_last_feedingtime",
+                                      getFormattedDateTime());
+                cat_output = true;
+            }
+        }
+        if (cat.equals("c2")) {
+            if (checkFeedingLock("c2_lastfeedingtime", "c2_extra_delay",
+                                 now.hour(), now.minute(), now.day()) &&
+                checkFeedingExtra("c2_extra_amount_number",
+                                  "c2_extra_amount_count")) {
+                servo->rotate(
+                    SERVO_ROTATE_FORWARD,
+                    iot.configuration.get("c2_extra_amount_size").toInt());
+                iot.configuration.set("c2_last_feedingtime",
+                                      getFormattedDateTime());
+                cat_output = true;
+            }
+        }
+        if (cat.equals("c3")) {
+            if (checkFeedingLock("c3_lastfeedingtime", "c3_extra_delay",
+                                 now.hour(), now.minute(), now.day()) &&
+                checkFeedingExtra("c3_extra_amount_number",
+                                  "c3_extra_amount_count")) {
+                servo->rotate(
+                    SERVO_ROTATE_FORWARD,
+                    iot.configuration.get("c3_extra_amount_size").toInt());
+                iot.configuration.set("c3_last_feedingtime",
+                                      getFormattedDateTime());
+                cat_output = true;
+            }
+        }
+    }
+    if (time_output) {
+        iot.configuration.set("last_feedingtime", getFormattedDateTime());
+        iot.configuration.save();
+    }
+    if (cat_output) {
+
+        iot.configuration.save();
+    }
+}
+
+bool CNosh::checkFeedingLock(String lf_time, String extra_delay, int hour,
+                             int minute, int day) {
+    String lft = iot.configuration.get(lf_time);
+
+    int splitT = lft.indexOf("T");
+    String dayStamp = lft.substring(0, splitT);
+    String timeStamp = lft.substring(splitT + 1, lft.length() - 1);
+
+    int splitTime = timeStamp.indexOf(":");
+    int day_lft =
+        dayStamp.substring(dayStamp.length() - 2, dayStamp.length()).toInt();
+
+    if ((day - day_lft) >= 1) {
+        // timespan more then one day
+        return true;
+    } else {
+        int delay = iot.configuration.get(extra_delay).toInt();
+        int hour_lft = timeStamp.substring(0, splitTime).toInt();
+        int minute_lft =
+            timeStamp.substring(splitTime + 1, splitTime + 3).toInt();
+
+        // timespan less then one day
+        if ((hour - hour_lft) >= 1) {
+            // timespan more than one hour
+            if ((hour - hour_lft) >= 2)
+                return true;
+            if ((hour - hour_lft) == 1) {
+                if (delay == 30 || delay == 60)
+                    return true;
+                if ((minute - minute_lft) >= 30 && delay == 90)
+                    return true;
+            }
+        } else {
+            // timespan less than one hour
+            if ((minute - minute_lft) >= 30 && delay == 30)
+                return true;
+            else
+                return false;
+        }
+    }
+}
+
+bool CNosh::checkFeedingExtra(String number, String count) {
+    if (iot.configuration.get(number).toInt() -
+            iot.configuration.get(count).toInt() ==
+        0)
+        return false;
+    else
+        return true;
 }
 
 /**
- * @brief Checks the state of cnosh and prints the respective information on the
- * display every 3 seconds
+ * @brief Checks the state of cnosh and prints the respective information on
+ * the display every 3 seconds
  *
  * State-1 : Accesspoint-Mode -> print IP and accesspointsecret
- * State-2: WLAN-Error -> print WLAN ERROR and print IP and accesspointsecret
- * State-3 : Running -> print Filllevel
+ * State-2: WLAN-Error -> print WLAN ERROR and print IP and
+ * accesspointsecret State-3 : Running -> print Filllevel
  *
  */
 void CNosh::printLCD() {
@@ -460,4 +596,41 @@ void CNosh::printLCD() {
         lcd->printLine(level, 1);
         vTaskDelay(3000);
     }
+}
+
+String CNosh::getFormattedDateTime() {
+    DateTime now = rtc.now();
+    String datetime = "";
+    datetime.concat(now.year());
+    datetime.concat("-");
+    if (now.month() < 10) {
+        datetime.concat("0");
+        datetime.concat(now.month());
+    } else {
+        datetime.concat(now.month());
+    }
+    datetime.concat("-");
+    if (now.day() < 10) {
+        datetime.concat("0");
+        datetime.concat(now.day());
+    } else {
+        datetime.concat(now.day());
+    }
+    datetime.concat("T");
+    if (now.hour() < 10) {
+        datetime.concat("0");
+        datetime.concat(now.hour());
+    } else {
+        datetime.concat(now.hour());
+    }
+    datetime.concat(":");
+    if (now.minute() < 10) {
+        datetime.concat("0");
+        datetime.concat(now.minute());
+    } else {
+        datetime.concat(now.minute());
+    }
+    datetime.concat(":");
+    datetime.concat("00Z");
+    return datetime;
 }
