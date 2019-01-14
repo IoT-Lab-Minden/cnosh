@@ -30,9 +30,7 @@ class CNosh {
   public:
     CNosh();
     ~CNosh() = default;
-
-    bool begin();
-    bool init();
+    void begin();
 
   private:
     LCD *lcd;
@@ -40,11 +38,16 @@ class CNosh {
     Measure *measure;
     ServoEngine *servo;
 
-    bool initConfiguration();
+    void init();
+    void initConfiguration();
     void initWebserver(Configuration);
     void detectRFID();
-    void checkFeeding();
+    void checkFeeding(String);
+    bool checkFeedingLock(String, String, int, int, int);
+    bool checkFeedingExtra(String, String);
     void printLCD();
+
+    String getFormattedDateTime();
 
     static void startTaskButton(void *);
     static void startTaskCNosh(void *);
