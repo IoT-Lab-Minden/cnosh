@@ -42,8 +42,12 @@ class CNosh {
     void initConfiguration();
     void initWebserver(Configuration);
     void detectRFID();
-    void checkFeeding();
+    void checkFeeding(String);
+    bool checkFeedingLock(String, String, int, int, int);
+    bool checkFeedingExtra(String, String);
     void printLCD();
+
+    String getFormattedDateTime();
 
     static void startTaskButton(void *);
     static void startTaskCNosh(void *);

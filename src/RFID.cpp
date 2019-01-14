@@ -13,7 +13,7 @@
 
 /**
  * @brief Construct a new RFID::RFID object
- * 
+ *
  */
 RFID::RFID() { mfrc522 = new MFRC522(SS_PIN, RST_PIN); }
 
@@ -28,22 +28,26 @@ void RFID::init() {
 }
 
 /**
- * @brief Extracts the uid of the current unit detected 
- * 
- * @return String the uid as string 
+ * @brief Extracts the uid of the current unit detected
+ *
+ * @return String the uid as string
  */
-String RFID::getUidAsString()
-{
+String RFID::getUidAsString() {
     // byte nuidPICC[4];
     String nuidString = "";
-    for (byte i = 0; i < mfrc522->uid.size; i++)
-    {
-        if(mfrc522->uid.uidByte[i] < 0x10){
+    for (byte i = 0; i < mfrc522->uid.size; i++) {
+        if (mfrc522->uid.uidByte[i] < 0x10) {
             nuidString.concat("0");
-        }else {
-            nuidString.concat(" ");
+            nuidString.concat(mfrc522->uid.uidByte[i]);
+            if (i != mfrc522->uid.size - 1) {
+                nuidString.concat(" ");
+            }
+        } else {
+            nuidString.concat(mfrc522->uid.uidByte[i]);
+            if (i != mfrc522->uid.size - 1) {
+                nuidString.concat(" ");
+            }
         }
-        nuidString.concat(mfrc522->uid.uidByte[i]);
     }
 
     // Halt PICC
@@ -57,7 +61,7 @@ String RFID::getUidAsString()
 
 /**
  * @brief Looks for an rfid unit and reads it if one is present
- * 
+ *
  * @return true if a card was detected
  * @return false else
  */
