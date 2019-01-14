@@ -133,6 +133,14 @@ void CNosh::detectRFID() {
     }
 }
 
+
+void CNosh::resetSystem() {
+
+}
+void CNosh::resetStatistics() {
+
+}
+
 /**
  * @brief 
  * 
