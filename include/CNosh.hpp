@@ -46,6 +46,8 @@ class CNosh {
     bool checkFeedingLock(String, String, int, int, int);
     bool checkFeedingExtra(String, String);
     void printLCD();
+    void resetStatistics();
+    void resetSystem();
 
     String getFormattedDateTime();
 
