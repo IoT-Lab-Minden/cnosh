@@ -413,7 +413,7 @@ void CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::time_amount_size, "1");
 
         iot.configuration.set(ConfigurationKey::c1_name, "Balu");
-        iot.configuration.set(ConfigurationKey::c1_uid, "112 130 84 00");
+        iot.configuration.set(ConfigurationKey::c1_uid, "112-130-84-00");
         iot.configuration.set(ConfigurationKey::c1_lastfeedingtime,
                               "2019-01-18T16:00:13Z");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_size, "1");
@@ -453,8 +453,8 @@ void CNosh::initConfiguration() {
 
     iot.configuration.dump();
 
-    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
-    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
+    //xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
+    //xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
 }
 
@@ -472,23 +472,53 @@ void CNosh::initWebserver(Configuration config) {
             DynamicJsonBuffer _jsonBuffer;
 
             JsonObject &_jsonData = response->getRoot();
-            JsonArray &cats = _jsonData.createNestedArray("cats");
+            JsonObject &cats = _jsonData.createNestedObject("cats");
 
-            JsonObject &cat = cats.createNestedObject();
-            cat["name"] = _jsonBuffer.strdup(iot.configuration.get("c1_name"));
-            cat["uid"] = _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
-            cat["lastfeedingtime"] =
+            cats["c1_name"] = _jsonBuffer.strdup(iot.configuration.get("c1_name"));
+            cats["c1_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
+            cats["c1_lastfeedingtime"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_lastfeedingtime"));
-            cat["extra_amount_size"] = _jsonBuffer.strdup(
+            cats["c1_extra_amount_size"] = _jsonBuffer.strdup(
                 iot.configuration.get("c1_extra_amount_size"));
-            cat["extra_amount_number"] = _jsonBuffer.strdup(
+            cats["c1_extra_amount_number"] = _jsonBuffer.strdup(
                 iot.configuration.get("c1_extra_amount_number"));
-            cat["extra_amount_count"] = _jsonBuffer.strdup(
+            cats["c1_extra_amount_count"] = _jsonBuffer.strdup(
                 iot.configuration.get("c1_extra_amount_count"));
-            cat["c1_extra_delay"] =
+            cats["c1_extra_delay"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
-            cat["c1_created"] =
+            cats["c1_created"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_created"));
+            cats["c2_name"] = _jsonBuffer.strdup(iot.configuration.get("c2_name"));
+            cats["c2_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_uid"));
+            cats["c2_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_lastfeedingtime"));
+            cats["c2_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_size"));
+            cats["c2_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_number"));
+            cats["c2_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_count"));
+            cats["c2_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_extra_delay"));
+            cats["c2_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_created"));
+            cats["c3_name"] = _jsonBuffer.strdup(iot.configuration.get("c3_name"));
+            cats["c3_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_uid"));
+            cats["c3_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_lastfeedingtime"));
+            cats["c3_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_size"));
+            cats["c3_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_number"));
+            cats["c3_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_count"));
+            cats["c3_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_extra_delay"));
+            cats["c3_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_created"));
 
             JsonObject &feedingtimes =
                 _jsonData.createNestedObject("feedingtimes");
@@ -657,7 +687,7 @@ void CNosh::initWebserver(Configuration config) {
             //                               webParameter->value().c_str());
             //     }
             // }
-
+            
             // iot.configuration.save();
             request->send(201);
         });

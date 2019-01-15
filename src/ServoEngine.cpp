@@ -50,6 +50,9 @@ void ServoEngine::rotate(int direction, int duration) {
         case 4:
             duration_time = 4000;
             break;
+        case 5:
+            duration_time = 5000;
+            break;
         }
         servo->write(direction);
         delay(duration_time);
