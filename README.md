@@ -26,6 +26,8 @@ void setup() {
   Serial.begin(115200);
   cnosh->begin();
 }
+
+void loop() {}
 ```
 
 ## Documentation
