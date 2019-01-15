@@ -1,18 +1,19 @@
 /**
+ * Firmware for ESP32 based cat food dispenser with Wi-Fi control
  * @file CNosh.cpp
  * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
  * @author Dario Leunig (dleunig@fh-bielefeld.de)
- * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+ * @brief Main class of CNosh food dispenser firmware
  * @version 0.1
  * @date 2019-01-05
  *
- * @copyright Copyright (c) 2019
- * Licensed under GPLv3. See LICENSE for details.
+ * @copyright Copyright (c) 2019 \n Licensed under GPLv3. See LICENSE for
+ * details.
  */
 #include <CNosh.hpp>
 
 /**
- * @brief Construct a new CNosh::CNosh object with all needed components
+ * @brief Construct a new CNosh::CNosh object with all needed components.
  *
  */
 CNosh::CNosh() {
@@ -23,13 +24,13 @@ CNosh::CNosh() {
 }
 
 /**
- * @brief Starts the initialisation process
+ * @brief Starts the Firmware. Needs to be executed just once.
  */
 void CNosh::begin() { init(); }
 
 /**
- * @brief Setup for all components of cnosh, including the webserver and cnosh
- * configuration data
+ * @brief Initialize all components of cnosh, including the webserver and cnosh
+ * configuration data.
  */
 void CNosh::init() {
     iot.begin();
@@ -58,11 +59,11 @@ void CNosh::init() {
 }
 
 /**
- * @brief Task to start the checking process of rfid and feedingtimes (infinity
- * loop)
+ * @brief FreeRTOS like taskfunction to start the checking process of rfid and
+ * feedingtimes (infinity loop).
  *
- * @param cnoshObj Takes the complete cnosh object, to have access to all
- * components
+ * @param cnoshObj Takes the complete cnosh object it self, to have access to
+ * all components.
  */
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
@@ -73,13 +74,12 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
 }
 
 /**
- * @brief Task to start the output on the LCD display (infinity
- * loop)
- * It checks the WLAN configuration for it self and prints the right output to
- * the LCD
+ * @brief FreeRTOS like taskfunction to start the output on the LCD-display
+ * (infinity loop). It checks the WLAN configuration for it self and prints the
+ * right output to the LCD-diplay.
  *
  * @param cnoshObj Takes the complete cnosh object, to have access to all
- * components
+ * components.
  */
 void CNosh::startTaskLCD(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
@@ -89,10 +89,10 @@ void CNosh::startTaskLCD(void *cnoshObj) {
 }
 
 /**
- * @brief Task to start the checking process of the dispender button (infinity
- * loop)
+ * @brief FreeRTOS like taskfunction to start the checking process of the
+ * dispending button (infinity loop).
  *
- * @param servoObj Takes the Servo-object to access the engine
+ * @param servoObj Takes the Servo-object to control the engine.
  */
 void CNosh::startTaskButton(void *servoObj) {
     int press1 = 0;
@@ -133,18 +133,25 @@ void CNosh::detectRFID() {
     }
 }
 
-
-void CNosh::resetSystem() {
-
-}
-void CNosh::resetStatistics() {
-
-}
+/**
+ * @brief Resets the system to default including cnosh and WLAN configuration
+ * data. Reboot after done.
+ *
+ */
+void CNosh::resetSystem() {}
 
 /**
- * @brief 
- * 
- * @param cat 
+ * @brief Resets the statistics of cnosh and all configured cats.
+ *
+ */
+void CNosh::resetStatistics() {}
+
+/**
+ * @brief Checks the configured feeding times and if a cat is warranted to get
+ * extra fooder. If there is a match it will dispend fooder and saves the last feeding time to the memory.
+ *
+ * @param cat If input is a cat ("c1","c2","c3") it checks extra fooder, else if
+ * its an empty string("") it checks the regular feeding times.
  */
 void CNosh::checkFeeding(String cat) {
     DateTime now = rtc.now();
@@ -228,22 +235,23 @@ void CNosh::checkFeeding(String cat) {
 }
 
 /**
- * @brief 
+ * @brief Checks the configured delay(timespan) of extra fooder.
+ *
+ * @param lf_time String to get the cat last feeding time.
+ * @param extra_delay String to get the timespan while the cat has to wait.
+ * @param hour The current hour as int.
+ * @param minute The current minute as int.
+ * @param day The current day of the month as int.
  * 
- * @param lf_time 
- * @param extra_delay 
- * @param hour 
- * @param minute 
- * @param day 
- * @return true 
- * @return false 
+ * @return true If the cat is not locked.
+ * @return false Else.
  */
 bool CNosh::checkFeedingLock(String lf_time, String extra_delay, int hour,
                              int minute, int day) {
     String lft = iot.configuration.get(lf_time);
-    
-    if(lft.equalsIgnoreCase(""))
-        return false;  
+
+    if (lft.equalsIgnoreCase(""))
+        return false;
 
     int splitT = lft.indexOf("T");
     String dayStamp = lft.substring(0, splitT);
@@ -284,12 +292,12 @@ bool CNosh::checkFeedingLock(String lf_time, String extra_delay, int hour,
 }
 
 /**
- * @brief 
- * 
- * @param number 
- * @param count 
- * @return true 
- * @return false 
+ * @brief Checks the count variable of extra fooder.
+ *
+ * @param number String to get the cat extra number.
+ * @param count String to get the cat extra count.
+ * @return true If the is more extra fooder avalible.
+ * @return false If the extra fooder is used.
  */
 bool CNosh::checkFeedingExtra(String number, String count) {
     if (iot.configuration.get(number).toInt() -
@@ -302,11 +310,11 @@ bool CNosh::checkFeedingExtra(String number, String count) {
 
 /**
  * @brief Checks the state of cnosh and prints the respective information on
- * the display every 3 seconds
- *
- * State-1 : Accesspoint-Mode -> print IP and accesspointsecret
+ * the display every 3 seconds \n
+ * State-1 : Accesspoint-Mode -> print IP and accesspointsecret \n
  * State-2: WLAN-Error -> print WLAN ERROR and print IP and
- * accesspointsecret State-3 : Running -> print Filllevel
+ * accesspointsecret \n
+ * State-3 : Running -> print Filllevel
  *
  */
 void CNosh::printLCD() {
@@ -343,6 +351,11 @@ void CNosh::printLCD() {
     }
 }
 
+/**
+ * @brief Gets the current date and time from the real time clock.
+ *
+ * @return String A formatted DateTime-String("YYY-MM-DDTHH:MM:SSZ");
+ */
 String CNosh::getFormattedDateTime() {
     DateTime now = rtc.now();
     String datetime = "";
@@ -382,7 +395,7 @@ String CNosh::getFormattedDateTime() {
 
 /**
  * @brief Creates the default configuration data and saves it.
- * Creats and starts the freeRTOS-tasks
+ * Creats the FreeRTOS-tasks
  *
  */
 void CNosh::initConfiguration() {
@@ -447,7 +460,7 @@ void CNosh::initConfiguration() {
 
 /**
  * @brief Creates all needed webserver routes that need to have access to the
- * cnosh components
+ * cnosh components.
  *
  * @param config Takes the Configuration-object of Basecamp to access the data
  */

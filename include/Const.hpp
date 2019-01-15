@@ -13,7 +13,7 @@
 // LCD
 const int LCD_COLUMNS = 16;
 const int LCD_ROWS = 2;
-const int LCD_ADRESS = 63; // 0x3F
+const int LCD_ADRESS = 39; // 0x3F //0x27
 const int SDA_SLAVE = 25;
 const int SCL_SLAVE = 26;
 // RFID

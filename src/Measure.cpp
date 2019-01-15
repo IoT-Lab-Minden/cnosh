@@ -1,18 +1,20 @@
 /**
+ * Firmware for ESP32 based cat food dispenser with Wi-Fi control
  * @file Measure.cpp
  * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
  * @author Dario Leunig (dleunig@fh-bielefeld.de)
- * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+ * @brief Controls a VL53L0X-Ranging-Measurement device. See constant values
+ * in Const.hpp for setup.
  * @version 0.1
  * @date 2019-01-05
  *
- * @copyright Copyright (c) 2019
- * Licensed under GPLv3. See LICENSE for details.
+ * @copyright Copyright (c) 2019 \n Licensed under GPLv3. See LICENSE for
+ * details.
  */
 #include <Measure.hpp>
 
 /**
- * @brief Construct a new Measure:: Measure object
+ * @brief Construct a new Measure:: Measure object.
  * 
  */
 Measure::Measure() {
@@ -21,7 +23,7 @@ Measure::Measure() {
 }
 
 /**
- * @brief Initializes the Adafruit_VL53L0X-object
+ * @brief Initializes the Adafruit_VL53L0X-object.
  *
  */
 void Measure::init() {
@@ -37,9 +39,9 @@ void Measure::init() {
 }
 
 /**
- * @brief Reads the output of the laser and returns
+ * @brief Reads the output of the laser.
  * 
- * @return int distance in millimeter, -1 when laser is out of range
+ * @return int Distance in millimeter, -1 when laser is out of range.
  */
 int Measure::readDistance() {
     lox->rangingTest(measure,

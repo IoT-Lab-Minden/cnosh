@@ -1,18 +1,19 @@
 /**
+ * Firmware for ESP32 based cat food dispenser with Wi-Fi control
  * @file ServoEngine.cpp
  * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
  * @author Dario Leunig (dleunig@fh-bielefeld.de)
- * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+ * @brief Controls the Servo-Engine. See constant values in Const.hpp for setup.
  * @version 0.1
  * @date 2019-01-05
  *
- * @copyright Copyright (c) 2019
- * Licensed under GPLv3. See LICENSE for details.
+ * @copyright Copyright (c) 2019 \n Licensed under GPLv3. See LICENSE for
+ * details.
  */
 #include <ServoEngine.hpp>
 
 /**
- * @brief Construct a new Servo Engine:: Servo Engine object
+ * @brief Construct a new Servo Engine:: Servo Engine object.
  *
  */
 ServoEngine::ServoEngine() {
@@ -21,13 +22,14 @@ ServoEngine::ServoEngine() {
 }
 
 /**
- * @brief Rotats the
+ * @brief Rotats the servo in the specific direction. See constant values in
+ * Const.hpp for setup.
  *
- * @param direction see SERVO_ROTATE_FORWARD and SERVO_ROTATE_BACKWARD in
+ * @param direction See SERVO_ROTATE_FORWARD and SERVO_ROTATE_BACKWARD in
  * Const.hpp
- * @param duration time to activate the engine in milliseconds (3 seconds,
+ * @param duration Time to activate the engine in milliseconds (3 seconds,
  * duration = 3000), if duration is 0 you have to call stop() to stop the
- * rotation
+ * rotation.
  */
 void ServoEngine::rotate(int direction, int duration) {
     if (duration == 0) {
@@ -55,7 +57,7 @@ void ServoEngine::rotate(int direction, int duration) {
     }
 }
 /**
- * @brief Stops the engine with SERVO_STOP (see Const.hpp)
+ * @brief Stops the engine with SERVO_STOP (see Const.hpp).
  *
  */
 void ServoEngine::stop() { servo->write(SERVO_STOP); }

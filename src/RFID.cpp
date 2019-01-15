@@ -1,24 +1,26 @@
 /**
+ * Firmware for ESP32 based cat food dispenser with Wi-Fi control
  * @file RFID.cpp
  * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
  * @author Dario Leunig (dleunig@fh-bielefeld.de)
- * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+ * @brief Controls the MFRC522-RFID-Read/Write-Interface. See constant values
+ * in Const.hpp for setup.
  * @version 0.1
  * @date 2019-01-05
  *
- * @copyright Copyright (c) 2019
- * Licensed under GPLv3. See LICENSE for details.
+ * @copyright Copyright (c) 2019 \n Licensed under GPLv3. See LICENSE for
+ * details.
  */
 #include <RFID.hpp>
 
 /**
- * @brief Construct a new RFID::RFID object
+ * @brief Construct a new RFID::RFID object.
  *
  */
 RFID::RFID() { mfrc522 = new MFRC522(SS_PIN, RST_PIN); }
 
 /**
- * @brief Initializes the MFRC522-object
+ * @brief Initializes the MFRC522-object.
  *
  */
 void RFID::init() {
@@ -28,9 +30,9 @@ void RFID::init() {
 }
 
 /**
- * @brief Extracts the uid of the current unit detected
+ * @brief Extracts the UID of the current unit detected.
  *
- * @return String the uid as string
+ * @return String The UID as string. (four byte: "0-255 0-255 0-255 0-255")
  */
 String RFID::getUidAsString() {
     // byte nuidPICC[4];
@@ -60,10 +62,10 @@ String RFID::getUidAsString() {
 }
 
 /**
- * @brief Looks for an rfid unit and reads it if one is present
+ * @brief Looks for an rfid unit and reads it if one is present.
  *
- * @return true if a card was detected
- * @return false else
+ * @return true If a card was detected.
+ * @return false Else.
  */
 bool RFID::detectUnit() {
     // Look for new cards
