@@ -561,7 +561,133 @@ void CNosh::initWebserver(Configuration config) {
             // nothing.
             request->send(response);
         });
+    iot.web.server.on(
+        "/cats.json", HTTP_GET,
+        [&config, this](AsyncWebServerRequest *request) {
+            AsyncJsonResponse *response = new AsyncJsonResponse();
+            DynamicJsonBuffer _jsonBuffer;
 
+            JsonObject &_jsonData = response->getRoot();
+            JsonObject &cats = _jsonData.createNestedObject("cats");
+
+            cats["c1_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_name"));
+            cats["c1_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
+            cats["c1_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_lastfeedingtime"));
+            cats["c1_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c1_extra_amount_size"));
+            cats["c1_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c1_extra_amount_number"));
+            cats["c1_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c1_extra_amount_count"));
+            cats["c1_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
+            cats["c1_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_created"));
+            cats["c2_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_name"));
+            cats["c2_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_uid"));
+            cats["c2_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_lastfeedingtime"));
+            cats["c2_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_size"));
+            cats["c2_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_number"));
+            cats["c2_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_count"));
+            cats["c2_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_extra_delay"));
+            cats["c2_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_created"));
+            cats["c3_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_name"));
+            cats["c3_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_uid"));
+            cats["c3_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_lastfeedingtime"));
+            cats["c3_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_size"));
+            cats["c3_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_number"));
+            cats["c3_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_count"));
+            cats["c3_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_extra_delay"));
+            cats["c3_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_created"));
+                
+            response->setLength();
+            // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
+            // send. As this is not documented in the header there: thanks for
+            // nothing.
+            request->send(response);
+        });
+    iot.web.server.on(
+        "/feedingtimes.json", HTTP_GET,
+        [&config, this](AsyncWebServerRequest *request) {
+            AsyncJsonResponse *response = new AsyncJsonResponse();
+            DynamicJsonBuffer _jsonBuffer;
+
+            JsonObject &_jsonData = response->getRoot();
+           
+            JsonObject &feedingtimes =
+                _jsonData.createNestedObject("feedingtimes");
+            feedingtimes["time_1_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_1_h"));
+            feedingtimes["time_1_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_1_m"));
+            feedingtimes["time_2_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_2_h"));
+            feedingtimes["time_2_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_2_m"));
+            feedingtimes["time_3_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_3_h"));
+            feedingtimes["time_3_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_3_m"));
+            feedingtimes["time_4_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_4_h"));
+            feedingtimes["time_4_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_4_m"));
+            feedingtimes["time_amount_size"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_amount_size"));
+
+            response->setLength();
+            // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
+            // send. As this is not documented in the header there: thanks for
+            // nothing.
+            request->send(response);
+        });
+    iot.web.server.on(
+        "/statistics.json", HTTP_GET,
+        [&config, this](AsyncWebServerRequest *request) {
+            AsyncJsonResponse *response = new AsyncJsonResponse();
+            DynamicJsonBuffer _jsonBuffer;
+
+            JsonObject &_jsonData = response->getRoot();
+
+            JsonObject &statistics = _jsonData.createNestedObject("statistics");
+            statistics["configured"] =
+                _jsonBuffer.strdup(iot.configuration.get("cnoshConfiguration"));
+            statistics["startdate"] =
+                _jsonBuffer.strdup(iot.configuration.get("startdate"));
+            statistics["last_savedate"] =
+                _jsonBuffer.strdup(iot.configuration.get("last_savedate"));
+            statistics["last_feedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("last_feedingtime"));
+            statistics["total_amount_time"] =
+                _jsonBuffer.strdup(iot.configuration.get("total_amount_time"));
+            statistics["total_amount_extra"] =
+                _jsonBuffer.strdup(iot.configuration.get("total_amount_extra"));
+
+            response->setLength();
+            // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
+            // send. As this is not documented in the header there: thanks for
+            // nothing.
+            request->send(response);
+        });
     iot.web.server.on(
         "/delete_cat", HTTP_POST,
         [&config, this](AsyncWebServerRequest *request) {
