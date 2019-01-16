@@ -1,18 +1,19 @@
 /**
+ * Firmware for ESP32 based cat food dispenser with Wi-Fi control
  * @file CNosh.cpp
  * @author Alexander Bergmann (alexander.bergmann@fh-bielefeld.de)
  * @author Dario Leunig (dleunig@fh-bielefeld.de)
- * @brief CNosh - Firmware for ESP32 based cat food dispenser with Wi-Fi control
+ * @brief Main class of CNosh food dispenser firmware
  * @version 0.1
  * @date 2019-01-05
  *
- * @copyright Copyright (c) 2019
- * Licensed under GPLv3. See LICENSE for details.
+ * @copyright Copyright (c) 2019 \n Licensed under GPLv3. See LICENSE for
+ * details.
  */
 #include <CNosh.hpp>
 
 /**
- * @brief Construct a new CNosh::CNosh object with all needed components
+ * @brief Construct a new CNosh::CNosh object with all needed components.
  *
  */
 CNosh::CNosh() {
@@ -23,13 +24,13 @@ CNosh::CNosh() {
 }
 
 /**
- * @brief Starts the initialisation process
+ * @brief Starts the Firmware. Needs to be executed just once.
  */
 void CNosh::begin() { init(); }
 
 /**
- * @brief Setup for all components of cnosh, including the webserver and cnosh
- * configuration data
+ * @brief Initialize all components of cnosh, including the webserver and cnosh
+ * configuration data.
  */
 void CNosh::init() {
     iot.begin();
@@ -58,11 +59,11 @@ void CNosh::init() {
 }
 
 /**
- * @brief Task to start the checking process of rfid and feedingtimes (infinity
- * loop)
+ * @brief FreeRTOS like taskfunction to start the checking process of rfid and
+ * feedingtimes (infinity loop).
  *
- * @param cnoshObj Takes the complete cnosh object, to have access to all
- * components
+ * @param cnoshObj Takes the complete cnosh object it self, to have access to
+ * all components.
  */
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
@@ -73,13 +74,12 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
 }
 
 /**
- * @brief Task to start the output on the LCD display (infinity
- * loop)
- * It checks the WLAN configuration for it self and prints the right output to
- * the LCD
+ * @brief FreeRTOS like taskfunction to start the output on the LCD-display
+ * (infinity loop). It checks the WLAN configuration for it self and prints the
+ * right output to the LCD-diplay.
  *
  * @param cnoshObj Takes the complete cnosh object, to have access to all
- * components
+ * components.
  */
 void CNosh::startTaskLCD(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
@@ -89,10 +89,10 @@ void CNosh::startTaskLCD(void *cnoshObj) {
 }
 
 /**
- * @brief Task to start the checking process of the dispender button (infinity
- * loop)
+ * @brief FreeRTOS like taskfunction to start the checking process of the
+ * dispending button (infinity loop).
  *
- * @param servoObj Takes the Servo-object to access the engine
+ * @param servoObj Takes the Servo-object to control the engine.
  */
 void CNosh::startTaskButton(void *servoObj) {
     int press1 = 0;
@@ -133,18 +133,25 @@ void CNosh::detectRFID() {
     }
 }
 
-
-void CNosh::resetSystem() {
-
-}
-void CNosh::resetStatistics() {
-
-}
+/**
+ * @brief Resets the system to default including cnosh and WLAN configuration
+ * data. Reboot after done.
+ *
+ */
+void CNosh::resetSystem() {}
 
 /**
- * @brief 
- * 
- * @param cat 
+ * @brief Resets the statistics of cnosh and all configured cats.
+ *
+ */
+void CNosh::resetStatistics() {}
+
+/**
+ * @brief Checks the configured feeding times and if a cat is warranted to get
+ * extra fooder. If there is a match it will dispend fooder and saves the last feeding time to the memory.
+ *
+ * @param cat If input is a cat ("c1","c2","c3") it checks extra fooder, else if
+ * its an empty string("") it checks the regular feeding times.
  */
 void CNosh::checkFeeding(String cat) {
     DateTime now = rtc.now();
@@ -228,22 +235,23 @@ void CNosh::checkFeeding(String cat) {
 }
 
 /**
- * @brief 
+ * @brief Checks the configured delay(timespan) of extra fooder.
+ *
+ * @param lf_time String to get the cat last feeding time.
+ * @param extra_delay String to get the timespan while the cat has to wait.
+ * @param hour The current hour as int.
+ * @param minute The current minute as int.
+ * @param day The current day of the month as int.
  * 
- * @param lf_time 
- * @param extra_delay 
- * @param hour 
- * @param minute 
- * @param day 
- * @return true 
- * @return false 
+ * @return true If the cat is not locked.
+ * @return false Else.
  */
 bool CNosh::checkFeedingLock(String lf_time, String extra_delay, int hour,
                              int minute, int day) {
     String lft = iot.configuration.get(lf_time);
-    
-    if(lft.equalsIgnoreCase(""))
-        return false;  
+
+    if (lft.equalsIgnoreCase(""))
+        return false;
 
     int splitT = lft.indexOf("T");
     String dayStamp = lft.substring(0, splitT);
@@ -284,12 +292,12 @@ bool CNosh::checkFeedingLock(String lf_time, String extra_delay, int hour,
 }
 
 /**
- * @brief 
- * 
- * @param number 
- * @param count 
- * @return true 
- * @return false 
+ * @brief Checks the count variable of extra fooder.
+ *
+ * @param number String to get the cat extra number.
+ * @param count String to get the cat extra count.
+ * @return true If the is more extra fooder avalible.
+ * @return false If the extra fooder is used.
  */
 bool CNosh::checkFeedingExtra(String number, String count) {
     if (iot.configuration.get(number).toInt() -
@@ -302,11 +310,11 @@ bool CNosh::checkFeedingExtra(String number, String count) {
 
 /**
  * @brief Checks the state of cnosh and prints the respective information on
- * the display every 3 seconds
- *
- * State-1 : Accesspoint-Mode -> print IP and accesspointsecret
+ * the display every 3 seconds \n
+ * State-1 : Accesspoint-Mode -> print IP and accesspointsecret \n
  * State-2: WLAN-Error -> print WLAN ERROR and print IP and
- * accesspointsecret State-3 : Running -> print Filllevel
+ * accesspointsecret \n
+ * State-3 : Running -> print Filllevel
  *
  */
 void CNosh::printLCD() {
@@ -343,6 +351,11 @@ void CNosh::printLCD() {
     }
 }
 
+/**
+ * @brief Gets the current date and time from the real time clock.
+ *
+ * @return String A formatted DateTime-String("YYY-MM-DDTHH:MM:SSZ");
+ */
 String CNosh::getFormattedDateTime() {
     DateTime now = rtc.now();
     String datetime = "";
@@ -382,7 +395,7 @@ String CNosh::getFormattedDateTime() {
 
 /**
  * @brief Creates the default configuration data and saves it.
- * Creats and starts the freeRTOS-tasks
+ * Creats the FreeRTOS-tasks
  *
  */
 void CNosh::initConfiguration() {
@@ -400,7 +413,7 @@ void CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::time_amount_size, "1");
 
         iot.configuration.set(ConfigurationKey::c1_name, "Balu");
-        iot.configuration.set(ConfigurationKey::c1_uid, "112 130 84 00");
+        iot.configuration.set(ConfigurationKey::c1_uid, "112-130-84-00");
         iot.configuration.set(ConfigurationKey::c1_lastfeedingtime,
                               "2019-01-18T16:00:13Z");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_size, "1");
@@ -440,14 +453,14 @@ void CNosh::initConfiguration() {
 
     iot.configuration.dump();
 
-    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
-    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
+    //xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
+    //xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
 }
 
 /**
  * @brief Creates all needed webserver routes that need to have access to the
- * cnosh components
+ * cnosh components.
  *
  * @param config Takes the Configuration-object of Basecamp to access the data
  */
@@ -459,23 +472,53 @@ void CNosh::initWebserver(Configuration config) {
             DynamicJsonBuffer _jsonBuffer;
 
             JsonObject &_jsonData = response->getRoot();
-            JsonArray &cats = _jsonData.createNestedArray("cats");
+            JsonObject &cats = _jsonData.createNestedObject("cats");
 
-            JsonObject &cat = cats.createNestedObject();
-            cat["name"] = _jsonBuffer.strdup(iot.configuration.get("c1_name"));
-            cat["uid"] = _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
-            cat["lastfeedingtime"] =
+            cats["c1_name"] = _jsonBuffer.strdup(iot.configuration.get("c1_name"));
+            cats["c1_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
+            cats["c1_lastfeedingtime"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_lastfeedingtime"));
-            cat["extra_amount_size"] = _jsonBuffer.strdup(
+            cats["c1_extra_amount_size"] = _jsonBuffer.strdup(
                 iot.configuration.get("c1_extra_amount_size"));
-            cat["extra_amount_number"] = _jsonBuffer.strdup(
+            cats["c1_extra_amount_number"] = _jsonBuffer.strdup(
                 iot.configuration.get("c1_extra_amount_number"));
-            cat["extra_amount_count"] = _jsonBuffer.strdup(
+            cats["c1_extra_amount_count"] = _jsonBuffer.strdup(
                 iot.configuration.get("c1_extra_amount_count"));
-            cat["c1_extra_delay"] =
+            cats["c1_extra_delay"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
-            cat["c1_created"] =
+            cats["c1_created"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_created"));
+            cats["c2_name"] = _jsonBuffer.strdup(iot.configuration.get("c2_name"));
+            cats["c2_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_uid"));
+            cats["c2_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_lastfeedingtime"));
+            cats["c2_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_size"));
+            cats["c2_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_number"));
+            cats["c2_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_count"));
+            cats["c2_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_extra_delay"));
+            cats["c2_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_created"));
+            cats["c3_name"] = _jsonBuffer.strdup(iot.configuration.get("c3_name"));
+            cats["c3_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_uid"));
+            cats["c3_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_lastfeedingtime"));
+            cats["c3_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_size"));
+            cats["c3_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_number"));
+            cats["c3_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_count"));
+            cats["c3_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_extra_delay"));
+            cats["c3_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_created"));
 
             JsonObject &feedingtimes =
                 _jsonData.createNestedObject("feedingtimes");
@@ -518,7 +561,133 @@ void CNosh::initWebserver(Configuration config) {
             // nothing.
             request->send(response);
         });
+    iot.web.server.on(
+        "/cats.json", HTTP_GET,
+        [&config, this](AsyncWebServerRequest *request) {
+            AsyncJsonResponse *response = new AsyncJsonResponse();
+            DynamicJsonBuffer _jsonBuffer;
 
+            JsonObject &_jsonData = response->getRoot();
+            JsonObject &cats = _jsonData.createNestedObject("cats");
+
+            cats["c1_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_name"));
+            cats["c1_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
+            cats["c1_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_lastfeedingtime"));
+            cats["c1_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c1_extra_amount_size"));
+            cats["c1_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c1_extra_amount_number"));
+            cats["c1_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c1_extra_amount_count"));
+            cats["c1_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
+            cats["c1_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_created"));
+            cats["c2_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_name"));
+            cats["c2_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_uid"));
+            cats["c2_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_lastfeedingtime"));
+            cats["c2_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_size"));
+            cats["c2_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_number"));
+            cats["c2_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c2_extra_amount_count"));
+            cats["c2_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_extra_delay"));
+            cats["c2_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_created"));
+            cats["c3_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_name"));
+            cats["c3_uid"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_uid"));
+            cats["c3_lastfeedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_lastfeedingtime"));
+            cats["c3_extra_amount_size"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_size"));
+            cats["c3_extra_amount_number"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_number"));
+            cats["c3_extra_amount_count"] = _jsonBuffer.strdup(
+                iot.configuration.get("c3_extra_amount_count"));
+            cats["c3_extra_delay"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_extra_delay"));
+            cats["c3_created"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_created"));
+                
+            response->setLength();
+            // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
+            // send. As this is not documented in the header there: thanks for
+            // nothing.
+            request->send(response);
+        });
+    iot.web.server.on(
+        "/feedingtimes.json", HTTP_GET,
+        [&config, this](AsyncWebServerRequest *request) {
+            AsyncJsonResponse *response = new AsyncJsonResponse();
+            DynamicJsonBuffer _jsonBuffer;
+
+            JsonObject &_jsonData = response->getRoot();
+           
+            JsonObject &feedingtimes =
+                _jsonData.createNestedObject("feedingtimes");
+            feedingtimes["time_1_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_1_h"));
+            feedingtimes["time_1_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_1_m"));
+            feedingtimes["time_2_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_2_h"));
+            feedingtimes["time_2_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_2_m"));
+            feedingtimes["time_3_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_3_h"));
+            feedingtimes["time_3_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_3_m"));
+            feedingtimes["time_4_h"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_4_h"));
+            feedingtimes["time_4_m"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_4_m"));
+            feedingtimes["time_amount_size"] =
+                _jsonBuffer.strdup(iot.configuration.get("time_amount_size"));
+
+            response->setLength();
+            // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
+            // send. As this is not documented in the header there: thanks for
+            // nothing.
+            request->send(response);
+        });
+    iot.web.server.on(
+        "/statistics.json", HTTP_GET,
+        [&config, this](AsyncWebServerRequest *request) {
+            AsyncJsonResponse *response = new AsyncJsonResponse();
+            DynamicJsonBuffer _jsonBuffer;
+
+            JsonObject &_jsonData = response->getRoot();
+
+            JsonObject &statistics = _jsonData.createNestedObject("statistics");
+            statistics["configured"] =
+                _jsonBuffer.strdup(iot.configuration.get("cnoshConfiguration"));
+            statistics["startdate"] =
+                _jsonBuffer.strdup(iot.configuration.get("startdate"));
+            statistics["last_savedate"] =
+                _jsonBuffer.strdup(iot.configuration.get("last_savedate"));
+            statistics["last_feedingtime"] =
+                _jsonBuffer.strdup(iot.configuration.get("last_feedingtime"));
+            statistics["total_amount_time"] =
+                _jsonBuffer.strdup(iot.configuration.get("total_amount_time"));
+            statistics["total_amount_extra"] =
+                _jsonBuffer.strdup(iot.configuration.get("total_amount_extra"));
+
+            response->setLength();
+            // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
+            // send. As this is not documented in the header there: thanks for
+            // nothing.
+            request->send(response);
+        });
     iot.web.server.on(
         "/delete_cat", HTTP_POST,
         [&config, this](AsyncWebServerRequest *request) {
@@ -644,7 +813,7 @@ void CNosh::initWebserver(Configuration config) {
             //                               webParameter->value().c_str());
             //     }
             // }
-
+            
             // iot.configuration.save();
             request->send(201);
         });
