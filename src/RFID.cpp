@@ -42,12 +42,12 @@ String RFID::getUidAsString() {
             nuidString.concat("0");
             nuidString.concat(mfrc522->uid.uidByte[i]);
             if (i != mfrc522->uid.size - 1) {
-                nuidString.concat(" ");
+                nuidString.concat("-");
             }
         } else {
             nuidString.concat(mfrc522->uid.uidByte[i]);
             if (i != mfrc522->uid.size - 1) {
-                nuidString.concat(" ");
+                nuidString.concat("-");
             }
         }
     }

@@ -148,7 +148,8 @@ void CNosh::resetStatistics() {}
 
 /**
  * @brief Checks the configured feeding times and if a cat is warranted to get
- * extra fooder. If there is a match it will dispend fooder and saves the last feeding time to the memory.
+ * extra fooder. If there is a match it will dispend fooder and saves the last
+ * feeding time to the memory.
  *
  * @param cat If input is a cat ("c1","c2","c3") it checks extra fooder, else if
  * its an empty string("") it checks the regular feeding times.
@@ -242,7 +243,7 @@ void CNosh::checkFeeding(String cat) {
  * @param hour The current hour as int.
  * @param minute The current minute as int.
  * @param day The current day of the month as int.
- * 
+ *
  * @return true If the cat is not locked.
  * @return false Else.
  */
@@ -453,8 +454,8 @@ void CNosh::initConfiguration() {
 
     iot.configuration.dump();
 
-    //xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
-    //xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
+    // xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
+    // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
 }
 
@@ -474,7 +475,8 @@ void CNosh::initWebserver(Configuration config) {
             JsonObject &_jsonData = response->getRoot();
             JsonObject &cats = _jsonData.createNestedObject("cats");
 
-            cats["c1_name"] = _jsonBuffer.strdup(iot.configuration.get("c1_name"));
+            cats["c1_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c1_name"));
             cats["c1_uid"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_uid"));
             cats["c1_lastfeedingtime"] =
@@ -489,7 +491,8 @@ void CNosh::initWebserver(Configuration config) {
                 _jsonBuffer.strdup(iot.configuration.get("c1_extra_delay"));
             cats["c1_created"] =
                 _jsonBuffer.strdup(iot.configuration.get("c1_created"));
-            cats["c2_name"] = _jsonBuffer.strdup(iot.configuration.get("c2_name"));
+            cats["c2_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c2_name"));
             cats["c2_uid"] =
                 _jsonBuffer.strdup(iot.configuration.get("c2_uid"));
             cats["c2_lastfeedingtime"] =
@@ -504,7 +507,8 @@ void CNosh::initWebserver(Configuration config) {
                 _jsonBuffer.strdup(iot.configuration.get("c2_extra_delay"));
             cats["c2_created"] =
                 _jsonBuffer.strdup(iot.configuration.get("c2_created"));
-            cats["c3_name"] = _jsonBuffer.strdup(iot.configuration.get("c3_name"));
+            cats["c3_name"] =
+                _jsonBuffer.strdup(iot.configuration.get("c3_name"));
             cats["c3_uid"] =
                 _jsonBuffer.strdup(iot.configuration.get("c3_uid"));
             cats["c3_lastfeedingtime"] =
@@ -618,7 +622,7 @@ void CNosh::initWebserver(Configuration config) {
                 _jsonBuffer.strdup(iot.configuration.get("c3_extra_delay"));
             cats["c3_created"] =
                 _jsonBuffer.strdup(iot.configuration.get("c3_created"));
-                
+
             response->setLength();
             // NOTE: AsyncServer.send(ptr* foo) deletes `response` after async
             // send. As this is not documented in the header there: thanks for
@@ -632,7 +636,7 @@ void CNosh::initWebserver(Configuration config) {
             DynamicJsonBuffer _jsonBuffer;
 
             JsonObject &_jsonData = response->getRoot();
-           
+
             JsonObject &feedingtimes =
                 _jsonData.createNestedObject("feedingtimes");
             feedingtimes["time_1_h"] =
@@ -813,7 +817,7 @@ void CNosh::initWebserver(Configuration config) {
             //                               webParameter->value().c_str());
             //     }
             // }
-            
+
             // iot.configuration.save();
             request->send(201);
         });
@@ -829,7 +833,26 @@ void CNosh::initWebserver(Configuration config) {
                       });
     iot.web.server.on("/search_rfid", HTTP_POST,
                       [&config, this](AsyncWebServerRequest *request) {
-                          Serial.println("searching rfid");
-                          request->send(201);
+                          bool rfid_unit = false;
+                          int count = 0;
+
+                          while (count != 6) {
+                              if (rfid->detectUnit()) {
+                                  String uid = rfid->getUidAsString();
+                                  String text ="{\"uid\": ";
+                                  text.concat("\"");
+                                  text.concat(uid);
+                                  text.concat("\"}");
+                                  request->send(200, "application/json", text);
+                                  rfid_unit = true;
+                                  break;
+                              }
+                              vTaskDelay(1000);
+                              count++;
+                          }
+                          
+                          if(!rfid_unit){
+                              request->send(500);
+                          }
                       });
 }
