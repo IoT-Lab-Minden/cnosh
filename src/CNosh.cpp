@@ -68,8 +68,20 @@ void CNosh::init() {
 void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
-        cn->detectRFID();
-        cn->checkFeeding("");
+        // cn->detectRFID();
+        // cn->checkFeeding("");
+
+        if (cn->rfid->detectUnit()) {
+            unsigned long start = millis();
+            unsigned long duration = 2000;
+
+            Serial.println(cn->rfid->getUidAsString());
+
+            while (millis() <= start + duration) {
+                cn->servo->rotate(SERVO_ROTATE_FORWARD, 0);
+            }
+            cn->servo->stop();
+        }
     }
 }
 
@@ -415,8 +427,7 @@ void CNosh::initConfiguration() {
 
         iot.configuration.set(ConfigurationKey::c1_name, "");
         iot.configuration.set(ConfigurationKey::c1_uid, "");
-        iot.configuration.set(ConfigurationKey::c1_lastfeedingtime,
-                              "");
+        iot.configuration.set(ConfigurationKey::c1_lastfeedingtime, "");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_size, "1");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_number, "0");
         iot.configuration.set(ConfigurationKey::c1_extra_amount_count, "0");
@@ -425,8 +436,7 @@ void CNosh::initConfiguration() {
 
         iot.configuration.set(ConfigurationKey::c2_name, "");
         iot.configuration.set(ConfigurationKey::c2_uid, "");
-        iot.configuration.set(ConfigurationKey::c2_lastfeedingtime,
-                              "");
+        iot.configuration.set(ConfigurationKey::c2_lastfeedingtime, "");
         iot.configuration.set(ConfigurationKey::c2_extra_amount_size, "1");
         iot.configuration.set(ConfigurationKey::c2_extra_amount_number, "0");
         iot.configuration.set(ConfigurationKey::c2_extra_amount_count, "0");
@@ -442,10 +452,11 @@ void CNosh::initConfiguration() {
         iot.configuration.set(ConfigurationKey::c3_extra_delay, "60");
         iot.configuration.set(ConfigurationKey::c3_created, "0");
 
-        iot.configuration.set(ConfigurationKey::startdate, getFormattedDateTime());
+        iot.configuration.set(ConfigurationKey::startdate,
+                              getFormattedDateTime());
         iot.configuration.set(ConfigurationKey::last_savedate, "");
         iot.configuration.set(ConfigurationKey::last_feedingtime, "");
-        
+
         iot.configuration.set(ConfigurationKey::total_amount_time, "0");
         iot.configuration.set(ConfigurationKey::total_amount_extra, "0");
         iot.configuration.set(ConfigurationKey::cnoshConfiguration, "1");
@@ -456,7 +467,7 @@ void CNosh::initConfiguration() {
     iot.configuration.dump();
 
     // xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
-    // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 0, NULL);
+    // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1, NULL);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
 }
 
@@ -709,11 +720,40 @@ void CNosh::initWebserver(Configuration config) {
                 Serial.print(webParameter->name());
                 Serial.print(" soll gelöscht werden");
 
-                // configuration.set(webParameter->name().c_str(),
-                //                   webParameter->value().c_str());
+                String cat = webParameter->name();
+                if (cat.equalsIgnoreCase("c1_name")) {
+                    iot.configuration.set("c1_name", "");
+                    iot.configuration.set("c1_uid", "");
+                    iot.configuration.set("c1_lastfeedingtime", "");
+                    iot.configuration.set("c1_extra_amount_number", "0");
+                    iot.configuration.set("c1_extra_amount_size", "1");
+                    iot.configuration.set("c1_extra_amount_count", "0");
+                    iot.configuration.set("c1_extra_delay", "60");
+                    iot.configuration.set("c1_created", "0");
+                }
+                if (cat.equalsIgnoreCase("c2_name")) {
+                    iot.configuration.set("c2_name", "");
+                    iot.configuration.set("c2_uid", "");
+                    iot.configuration.set("c2_lastfeedingtime", "");
+                    iot.configuration.set("c2_extra_amount_number", "0");
+                    iot.configuration.set("c2_extra_amount_size", "1");
+                    iot.configuration.set("c2_extra_amount_count", "0");
+                    iot.configuration.set("c2_extra_delay", "60");
+                    iot.configuration.set("c2_created", "0");
+                }
+                if (cat.equalsIgnoreCase("c2_name")) {
+                    iot.configuration.set("c3_name", "");
+                    iot.configuration.set("c3_uid", "");
+                    iot.configuration.set("c3_lastfeedingtime", "");
+                    iot.configuration.set("c3_extra_amount_number", "0");
+                    iot.configuration.set("c3_extra_amount_size", "1");
+                    iot.configuration.set("c3_extra_amount_count", "0");
+                    iot.configuration.set("c3_extra_delay", "60");
+                    iot.configuration.set("c3_created", "0");
+                }
             }
 
-            // configuration.save();
+            iot.configuration.save();
             request->send(201);
         });
     iot.web.server.on(
@@ -731,11 +771,25 @@ void CNosh::initWebserver(Configuration config) {
                 Serial.print(webParameter->name());
                 Serial.print(" soll hinzugefügt werden.");
 
-                // configuration.set(webParameter->name().c_str(),
-                //                   webParameter->value().c_str());
+                String cat = webParameter->name();
+                if (cat.equalsIgnoreCase("c1_name")) {
+                    iot.configuration.set("c1_name",
+                                          webParameter->value().c_str());
+                    iot.configuration.set("c1_created", "1");
+                }
+                if (cat.equalsIgnoreCase("c2_name")) {
+                    iot.configuration.set("c2_name",
+                                          webParameter->value().c_str());
+                    iot.configuration.set("c2_created", "1");
+                }
+                if (cat.equalsIgnoreCase("c3_name")) {
+                    iot.configuration.set("c3_name",
+                                          webParameter->value().c_str());
+                    iot.configuration.set("c3_created", "1");
+                }
             }
 
-            // configuration.save();
+            iot.configuration.save();
             request->send(201);
         });
     iot.web.server.on(
@@ -774,21 +828,12 @@ void CNosh::initWebserver(Configuration config) {
                 AsyncWebParameter *webParameter = request->getParam(i);
                 if (webParameter->isPost() &&
                     webParameter->value().length() != 0) {
-                    Serial.println(webParameter->name());
-                    Serial.println(webParameter->value());
+                    iot.configuration.set(webParameter->name().c_str(),
+                                          webParameter->value().c_str());
                 }
             }
 
-            // for (int i = 0; i < request->params(); i++) {
-            //     AsyncWebParameter *webParameter = request->getParam(i);
-            //     if (webParameter->isPost() &&
-            //         webParameter->value().length() != 0) {
-            //         iot.configuration.set(webParameter->name().c_str(),
-            //                               webParameter->value().c_str());
-            //     }
-            // }
-
-            // iot.configuration.save();
+            iot.configuration.save();
             request->send(201);
         });
     iot.web.server.on(
@@ -801,25 +846,14 @@ void CNosh::initWebserver(Configuration config) {
                 return;
             }
 
-            for (int i = 0; i < request->params(); i++) {
-                AsyncWebParameter *webParameter = request->getParam(i);
+                AsyncWebParameter *webParameter = request->getParam(0);
                 if (webParameter->isPost() &&
                     webParameter->value().length() != 0) {
-                    Serial.println(webParameter->name());
-                    Serial.println(webParameter->value());
+                    iot.configuration.set(webParameter->name().c_str(),
+                                          webParameter->value().c_str());
                 }
-            }
 
-            // for (int i = 0; i < request->params(); i++) {
-            //     AsyncWebParameter *webParameter = request->getParam(i);
-            //     if (webParameter->isPost() &&
-            //         webParameter->value().length() != 0) {
-            //         iot.configuration.set(webParameter->name().c_str(),
-            //                               webParameter->value().c_str());
-            //     }
-            // }
-
-            // iot.configuration.save();
+            iot.configuration.save();
             request->send(201);
         });
     iot.web.server.on("/reset_system", HTTP_POST,
@@ -840,7 +874,7 @@ void CNosh::initWebserver(Configuration config) {
                           while (count != 6) {
                               if (rfid->detectUnit()) {
                                   String uid = rfid->getUidAsString();
-                                  String text ="{\"uid\": ";
+                                  String text = "{\"uid\": ";
                                   text.concat("\"");
                                   text.concat(uid);
                                   text.concat("\"}");
@@ -851,8 +885,8 @@ void CNosh::initWebserver(Configuration config) {
                               vTaskDelay(1000);
                               count++;
                           }
-                          
-                          if(!rfid_unit){
+
+                          if (!rfid_unit) {
                               request->send(500);
                           }
                       });
