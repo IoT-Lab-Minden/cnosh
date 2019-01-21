@@ -55,7 +55,6 @@ void ServoEngine::rotate(int direction, int duration) {
             break;
         }
         servo->write(direction);
-        delay(duration_time);
         this->stop();
     }
 }
