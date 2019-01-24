@@ -21,8 +21,6 @@ CNosh::CNosh() {
     measure = new Measure();
     servo = new ServoEngine();
     rfid = new RFID();
-
-
 }
 
 /**
@@ -48,9 +46,13 @@ void CNosh::init() {
     if (!rtc.begin()) {
         Serial.println("Couldn't find RTC");
     }
-    rtc.adjust(DateTime(__DATE__, __TIME__));
-    timeClient.begin();
-    timeClient.setTimeOffset(TIMEZONE_OFFSET);
+    if (!iot.configuration.get(ConfigurationKey::cnoshConfiguration)
+             .equalsIgnoreCase("1")) {
+        rtc.adjust(DateTime(__DATE__, __TIME__));
+    }
+
+    // timeClient.begin();
+    // timeClient.setTimeOffset(TIMEZONE_OFFSET);
 
     // initialize all components
     lcd->init();
@@ -58,6 +60,8 @@ void CNosh::init() {
     measure->init();
 
     initConfiguration();
+
+
 }
 
 /**
@@ -72,14 +76,25 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
     while (1) {
         // cn->detectRFID();
         // cn->checkFeeding("");
-        
-        if (cn->rfid->detectUnit()) {     
+
+        if (cn->rfid->detectUnit()) {
             unsigned long start = millis();
             unsigned long duration = 2000;
 
             Serial.println(cn->rfid->getUidAsString());
+            DateTime dt = rtc.now();
+            Serial.print(dt.hour());
+            Serial.print(":");
+            Serial.println(dt.minute());
 
-            while (millis() <= start + duration) {
+            String test = "Range:";
+            test.concat(cn->measure->readDistance());
+            Serial.println(test);
+
+            cn->lcd->printLine("Hallo", 0);
+            cn->lcd->printLine("Welt!", 1);
+
+                        while (millis() <= start + duration) {
                 cn->servo->rotate(SERVO_ROTATE_FORWARD, 0);
             }
         }
@@ -207,6 +222,13 @@ void CNosh::checkFeeding(String cat) {
                     iot.configuration.get("c1_extra_amount_size").toInt());
                 iot.configuration.set("c1_last_feedingtime",
                                       getFormattedDateTime());
+
+                int extra_count =
+                    iot.configuration.get("c1_extra_amount_count").toInt();
+                String parse_count = "";
+                extra_count++;
+                parse_count.concat(extra_count);
+                iot.configuration.set("c1_extra_amount_count", parse_count);
                 cat_output = true;
             }
         }
@@ -220,6 +242,12 @@ void CNosh::checkFeeding(String cat) {
                     iot.configuration.get("c2_extra_amount_size").toInt());
                 iot.configuration.set("c2_last_feedingtime",
                                       getFormattedDateTime());
+                int extra_count =
+                    iot.configuration.get("c2_extra_amount_count").toInt();
+                String parse_count = "";
+                extra_count++;
+                parse_count.concat(extra_count);
+                iot.configuration.set("c2_extra_amount_count", parse_count);
                 cat_output = true;
             }
         }
@@ -233,6 +261,12 @@ void CNosh::checkFeeding(String cat) {
                     iot.configuration.get("c3_extra_amount_size").toInt());
                 iot.configuration.set("c3_last_feedingtime",
                                       getFormattedDateTime());
+                int extra_count =
+                    iot.configuration.get("c3_extra_amount_count").toInt();
+                String parse_count = "";
+                extra_count++;
+                parse_count.concat(extra_count);
+                iot.configuration.set("c3_extra_amount_count", parse_count);
                 cat_output = true;
             }
         }
@@ -319,6 +353,11 @@ bool CNosh::checkFeedingExtra(String number, String count) {
         return false;
     else
         return true;
+}
+
+void CNosh::checkNextDay() {
+    DateTime now = rtc.now();
+    String datetime = "";
 }
 
 /**
@@ -454,8 +493,6 @@ void CNosh::initConfiguration() {
 
         iot.configuration.set(ConfigurationKey::startdate,
                               getFormattedDateTime());
-        iot.configuration.set(ConfigurationKey::last_savedate, "");
-        iot.configuration.set(ConfigurationKey::last_feedingtime, "");
 
         iot.configuration.set(ConfigurationKey::total_amount_time, "0");
         iot.configuration.set(ConfigurationKey::total_amount_extra, "0");
@@ -467,7 +504,8 @@ void CNosh::initConfiguration() {
     iot.configuration.dump();
 
     xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, &cnosh_handle);
-    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1, &button_handle);
+    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1,
+                &button_handle);
     // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, lcd_handle);
 }
 
@@ -846,24 +884,38 @@ void CNosh::initWebserver(Configuration config) {
                 return;
             }
 
-                AsyncWebParameter *webParameter = request->getParam(0);
-                if (webParameter->isPost() &&
-                    webParameter->value().length() != 0) {
-                    iot.configuration.set(webParameter->name().c_str(),
-                                          webParameter->value().c_str());
-                }
+            AsyncWebParameter *webParameter = request->getParam(0);
+            if (webParameter->isPost() && webParameter->value().length() != 0) {
+                iot.configuration.set(webParameter->name().c_str(),
+                                      webParameter->value().c_str());
+            }
 
             iot.configuration.save();
             request->send(201);
         });
     iot.web.server.on("/reset_system", HTTP_POST,
                       [&config, this](AsyncWebServerRequest *request) {
-                          Serial.println("resetting the system to default");
+                          Serial.println("Factory reset was forced.");
+                          // Format the flash storage
+                          SPIFFS.format();
+                          // Reset the boot counter
+                          iot.preferences.putUInt("bootcounter", 0);
+                          // Call the destructor for preferences so that all
+                          // data is safely stored befor rebooting
+                          iot.preferences.end();
+                          // send success
                           request->send(201);
+
+                          Serial.println("Rebooting.");
+                          // Reboot
+                          ESP.restart();
                       });
     iot.web.server.on("/reset_statistics", HTTP_POST,
                       [&config, this](AsyncWebServerRequest *request) {
-                          Serial.println("resetting statistics");
+                          iot.configuration.set("last_feedingtime", "");
+                          iot.configuration.set("total_amount_time", "0");
+                          iot.configuration.set("total_amount_extra", "0");
+
                           request->send(201);
                       });
     iot.web.server.on("/search_rfid", HTTP_POST,
@@ -873,10 +925,8 @@ void CNosh::initWebserver(Configuration config) {
                           unsigned long start = millis();
                           unsigned long duration = 6000;
 
-                          while (millis() <= start + duration)
-                          {
-                              if (rfid->detectUnit())
-                              {
+                          while (millis() <= start + duration) {
+                              if (rfid->detectUnit()) {
                                   String uid = rfid->getUidAsString();
                                   String text = "{\"uid\": ";
                                   text.concat("\"");
