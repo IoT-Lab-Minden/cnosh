@@ -21,6 +21,8 @@ CNosh::CNosh() {
     measure = new Measure();
     servo = new ServoEngine();
     rfid = new RFID();
+
+
 }
 
 /**
@@ -70,8 +72,8 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
     while (1) {
         // cn->detectRFID();
         // cn->checkFeeding("");
-
-        if (cn->rfid->detectUnit()) {
+        
+        if (cn->rfid->detectUnit()) {     
             unsigned long start = millis();
             unsigned long duration = 2000;
 
@@ -80,8 +82,8 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
             while (millis() <= start + duration) {
                 cn->servo->rotate(SERVO_ROTATE_FORWARD, 0);
             }
-            cn->servo->stop();
         }
+        cn->servo->stop();
     }
 }
 
@@ -111,9 +113,7 @@ void CNosh::startTaskButton(void *servoObj) {
     ServoEngine *servoTest = (ServoEngine *)servoObj;
     while (1) {
         press1 = digitalRead(BUTTON_PIN);
-        if (press1 == LOW) {
-            servoTest->stop();
-        } else {
+        if (press1 == HIGH) {
             servoTest->rotate(SERVO_ROTATE_FORWARD, 0);
         }
     }
@@ -466,9 +466,9 @@ void CNosh::initConfiguration() {
 
     iot.configuration.dump();
 
-    // xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, NULL);
-    // xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1, NULL);
-    // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, NULL);
+    xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, &cnosh_handle);
+    xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1, &button_handle);
+    // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, lcd_handle);
 }
 
 /**
@@ -721,7 +721,7 @@ void CNosh::initWebserver(Configuration config) {
                 Serial.print(" soll gelöscht werden");
 
                 String cat = webParameter->name();
-                if (cat.equalsIgnoreCase("c1_name")) {
+                if (cat.equalsIgnoreCase("c1_uid")) {
                     iot.configuration.set("c1_name", "");
                     iot.configuration.set("c1_uid", "");
                     iot.configuration.set("c1_lastfeedingtime", "");
@@ -731,7 +731,7 @@ void CNosh::initWebserver(Configuration config) {
                     iot.configuration.set("c1_extra_delay", "60");
                     iot.configuration.set("c1_created", "0");
                 }
-                if (cat.equalsIgnoreCase("c2_name")) {
+                if (cat.equalsIgnoreCase("c2_uid")) {
                     iot.configuration.set("c2_name", "");
                     iot.configuration.set("c2_uid", "");
                     iot.configuration.set("c2_lastfeedingtime", "");
@@ -741,7 +741,7 @@ void CNosh::initWebserver(Configuration config) {
                     iot.configuration.set("c2_extra_delay", "60");
                     iot.configuration.set("c2_created", "0");
                 }
-                if (cat.equalsIgnoreCase("c2_name")) {
+                if (cat.equalsIgnoreCase("c3_uid")) {
                     iot.configuration.set("c3_name", "");
                     iot.configuration.set("c3_uid", "");
                     iot.configuration.set("c3_lastfeedingtime", "");
@@ -869,10 +869,14 @@ void CNosh::initWebserver(Configuration config) {
     iot.web.server.on("/search_rfid", HTTP_POST,
                       [&config, this](AsyncWebServerRequest *request) {
                           bool rfid_unit = false;
-                          int count = 0;
 
-                          while (count != 6) {
-                              if (rfid->detectUnit()) {
+                          unsigned long start = millis();
+                          unsigned long duration = 6000;
+
+                          while (millis() <= start + duration)
+                          {
+                              if (rfid->detectUnit())
+                              {
                                   String uid = rfid->getUidAsString();
                                   String text = "{\"uid\": ";
                                   text.concat("\"");
@@ -882,8 +886,6 @@ void CNosh::initWebserver(Configuration config) {
                                   rfid_unit = true;
                                   break;
                               }
-                              vTaskDelay(1000);
-                              count++;
                           }
 
                           if (!rfid_unit) {
