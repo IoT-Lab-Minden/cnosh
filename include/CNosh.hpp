@@ -49,6 +49,7 @@ class CNosh {
     void checkFeeding(String);
     bool checkFeedingLock(String, String, int, int, int);
     bool checkFeedingExtra(String, String);
+    void checkNextDay();
     void printLCD();
     void resetStatistics();
     void resetSystem();
