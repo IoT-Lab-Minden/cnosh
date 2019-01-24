@@ -32,31 +32,7 @@ ServoEngine::ServoEngine() {
  * rotation.
  */
 void ServoEngine::rotate(int direction, int duration) {
-    if (duration == 0) {
-        // rotate everlasting
-        servo->write(direction);
-    } else {
-        int duration_time;
-        switch (duration) {
-        case 1:
-            duration_time = 1000;
-            break;
-        case 2:
-            duration_time = 2000;
-            break;
-        case 3:
-            duration_time = 3000;
-            break;
-        case 4:
-            duration_time = 4000;
-            break;
-        case 5:
-            duration_time = 5000;
-            break;
-        }
-        servo->write(direction);
-        this->stop();
-    }
+    servo->write(direction);
 }
 /**
  * @brief Stops the engine with SERVO_STOP (see Const.hpp).
