@@ -38,6 +38,10 @@ class CNosh {
     Measure *measure;
     ServoEngine *servo;
 
+    TaskHandle_t cnosh_handle;
+    TaskHandle_t button_handle;
+    TaskHandle_t lcd_handle;
+
     void init();
     void initConfiguration();
     void initWebserver(Configuration);
