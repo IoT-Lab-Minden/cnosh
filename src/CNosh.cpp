@@ -17,6 +17,7 @@
  *
  */
 CNosh::CNosh() {
+
     lcd = new LCD();
     measure = new Measure();
     servo = new ServoEngine();
@@ -36,8 +37,8 @@ void CNosh::init() {
     iot.begin();
     initWebserver(iot.configuration);
 
-    // the following line is for using slave i2c-Bus
-    // don't need this line when using master
+    // // the following line is for using slave i2c-Bus
+    // // don't need this line when using master
     Wire.begin(SDA_SLAVE, SCL_SLAVE);
 
     pinMode(BUTTON_PIN, INPUT_PULLDOWN);
@@ -60,8 +61,6 @@ void CNosh::init() {
     measure->init();
 
     initConfiguration();
-
-
 }
 
 /**
@@ -75,7 +74,7 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
     CNosh *cn = (CNosh *)cnoshObj;
     while (1) {
         // cn->detectRFID();
-        // cn->checkFeeding("");
+        cn->checkFeeding("");
 
         if (cn->rfid->detectUnit()) {
             unsigned long start = millis();
@@ -90,9 +89,10 @@ void CNosh::startTaskCNosh(void *cnoshObj) {
             String test = "Range:";
             test.concat(cn->measure->readDistance());
             Serial.println(test);
-
+            
+            cn->lcd->clear();
             cn->lcd->printLine("Hallo", 0);
-            cn->lcd->printLine("Welt!", 1);
+            cn->lcd->printLine("RFID!", 1);
 
                         while (millis() <= start + duration) {
                 cn->servo->rotate(SERVO_ROTATE_FORWARD, 0);
@@ -187,8 +187,10 @@ void CNosh::checkFeeding(String cat) {
     bool cat_output = false;
     if (cat.equalsIgnoreCase("")) {
         // function call without cat_uid
-        if (iot.configuration.get("time_1_h").toInt() == now.hour() &&
-            iot.configuration.get("time_1_m").toInt() == now.minute()) {
+                if (iot.configuration.get("time_1_h").toInt() ==
+                                  now.hour() &&
+                              iot.configuration.get("time_1_m").toInt() ==
+                                  now.minute()) {
             servo->rotate(SERVO_ROTATE_FORWARD,
                           iot.configuration.get("time_amount_size").toInt());
             time_output = true;
@@ -501,12 +503,12 @@ void CNosh::initConfiguration() {
         iot.configuration.save();
     }
 
-    iot.configuration.dump();
+    //iot.configuration.dump();
 
     xTaskCreate(this->startTaskCNosh, "CNosh", 2048, this, 2, &cnosh_handle);
     xTaskCreate(this->startTaskButton, "Button", 2048, servo, 1,
-                &button_handle);
-    // xTaskCreate(this->startTaskLCD, "LCD", 2048, this, 2, lcd_handle);
+               &button_handle);
+    //xTaskCreate(this->startTaskLCD, "LCD", 8192, this, 1, NULL);
 }
 
 /**
