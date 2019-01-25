@@ -38,6 +38,10 @@ class CNosh {
     Measure *measure;
     ServoEngine *servo;
 
+    TaskHandle_t cnosh_handle;
+    TaskHandle_t button_handle;
+    TaskHandle_t lcd_handle;
+
     void init();
     void initConfiguration();
     void initWebserver(Configuration);
@@ -45,6 +49,7 @@ class CNosh {
     void checkFeeding(String);
     bool checkFeedingLock(String, String, int, int, int);
     bool checkFeedingExtra(String, String);
+    void checkNextDay();
     void printLCD();
     void resetStatistics();
     void resetSystem();
